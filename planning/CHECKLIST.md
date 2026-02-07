@@ -54,18 +54,18 @@ Use this to track progress across all features.
 
 ---
 
-## Feature 4: Canvas & Layout State Management ☐
+## Feature 4: Canvas & Layout State Management ✅
 
-- [ ] 4.1: Create Layout Store
-- [ ] 4.2: Create Selection Store
-- [ ] 4.3: Implement Connection Logic Utilities
-- [ ] 4.4: Unit Test Connection Logic
-- [ ] 4.5: Create Canvas Component
-- [ ] 4.6: Test Canvas Component
-- [ ] 4.7: Update Home Page
-- [ ] 4.8: Final Verification
+- [x] 4.1: Create Layout Store
+- [x] 4.2: Create Selection Store
+- [x] 4.3: Implement Connection Logic Utilities
+- [x] 4.4: Unit Test Connection Logic
+- [x] 4.5: Create Canvas Component
+- [x] 4.6: Test Canvas Component
+- [x] 4.7: Update Home Page
+- [x] 4.8: Final Verification
 
-**Status:** ⏳ Blocked by Features 1 & 3
+**Status:** ✅ Complete
 
 ---
 
@@ -81,7 +81,7 @@ Use this to track progress across all features.
 - [ ] 5.8: Update Page Layout
 - [ ] 5.9: Final Verification
 
-**Status:** ⏳ Blocked by Features 1, 2, 3, 4
+**Status:** ⏳ Ready to start (dependencies met)
 
 ---
 
@@ -106,17 +106,17 @@ Use this to track progress across all features.
 - [ ] 7.5: Test Selection & Deletion
 - [ ] 7.6: Final MVP Verification
 
-**Status:** ⏳ Blocked by Feature 4
+**Status:** ⏳ Blocked by Feature 5
 
 ---
 
 ## Overall Progress
 
-**Completed:** 2 / 7 features  
+**Completed:** 4 / 7 features  
 **In Progress:** 0 features  
-**Blocked:** 5 features
+**Blocked:** 1 features
 
-**Next Step:** Begin Feature 3 (Piece Definitions & SVG Rendering)
+**Next Step:** Begin Feature 5 (Drag & Snap)
 
 ---
 
@@ -163,14 +163,24 @@ Use this to track progress across all features.
 
 After each feature completes, update this section:
 
-### Feature 1: ✅ / ❌
+### Feature 1: ✅
 
 - Completed: [date]
 - Notes: [any issues or gotchas encountered]
 
-### Feature 2: ✅ / ❌
+### Feature 2: ✅
 
 - Completed: [date]
 - Notes: [coverage results, any changes to geometry]
+
+### Feature 3: ✅
+
+- Completed: [date]
+- Notes: [implementation details]
+
+### Feature 4: ✅
+
+- Completed: February 8, 2026
+- Notes: All stores and components implemented successfully. Fixed $state import (runes don't need imports in Svelte 5). Layout store tracks pieces and connections, selection store tracks selected piece, Canvas renders all pieces reactively. Connection logic validates port matching with rotated directions. Build succeeded with 0 errors (2 a11y warnings on Canvas SVG - non-blocking).
 
 (Continue for all features...)
