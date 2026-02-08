@@ -69,19 +69,19 @@ Use this to track progress across all features.
 
 ---
 
-## Feature 5: Drag & Snap ☐
+## Feature 5: Drag & Snap ✅
 
-- [ ] 5.1: Create Drag State Store
-- [ ] 5.2: Implement Snap Calculation
-- [ ] 5.3: Unit Test Snap Logic
-- [ ] 5.4: Create PiecePanel Component
-- [ ] 5.5: Create DragPreview Component
-- [ ] 5.6: Integrate Snap Detection
-- [ ] 5.7: Handle Drop & Place Piece
-- [ ] 5.8: Update Page Layout
-- [ ] 5.9: Final Verification
+- [x] 5.1: Create Drag State Store
+- [x] 5.2: Implement Snap Calculation
+- [x] 5.3: Unit Test Snap Logic
+- [x] 5.4: Create PiecePanel Component
+- [x] 5.5: Create DragPreview Component
+- [x] 5.6: Integrate Snap Detection
+- [x] 5.7: Handle Drop & Place Piece
+- [x] 5.8: Update Page Layout
+- [x] 5.9: Final Verification
 
-**Status:** ⏳ Ready to start (dependencies met)
+**Status:** ✅ Complete
 
 ---
 
@@ -93,7 +93,7 @@ Use this to track progress across all features.
 - [ ] 6.4: Document Rotation in UI
 - [ ] 6.5: Test All Rotation Combinations
 
-**Status:** ⏳ Blocked by Feature 5
+**Status:** ⏳ Ready to start (dependencies met)
 
 ---
 
@@ -106,17 +106,17 @@ Use this to track progress across all features.
 - [ ] 7.5: Test Selection & Deletion
 - [ ] 7.6: Final MVP Verification
 
-**Status:** ⏳ Blocked by Feature 5
+**Status:** ⏳ Ready to start (dependencies met)
 
 ---
 
 ## Overall Progress
 
-**Completed:** 4 / 7 features  
+**Completed:** 5 / 7 features  
 **In Progress:** 0 features  
-**Blocked:** 1 features
+**Blocked:** 0 features
 
-**Next Step:** Begin Feature 5 (Drag & Snap)
+**Next Step:** Begin Feature 6 (Piece Rotation) or Feature 7 (Selection & Deletion)
 
 ---
 

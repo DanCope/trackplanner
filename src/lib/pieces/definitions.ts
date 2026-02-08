@@ -66,7 +66,7 @@ export const curve45: PieceDefinition = {
 				x: curveRadius - curveRadius * Math.cos(curveAngleRad),
 				y: curveRadius * Math.sin(curveAngleRad)
 			},
-			direction: rotateDirection('S', -1) // Rotate entry direction by -45 degrees (clockwise in math)
+			direction: rotateDirection('S', 3) // Exit direction after 45° right-turn in SVG y-down
 		}
 	],
 	// SVG: ring segment path (outer arc -> inner arc)
