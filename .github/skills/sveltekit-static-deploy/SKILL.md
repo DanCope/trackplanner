@@ -1,4 +1,4 @@
-```skill
+````skill
 ---
 name: sveltekit-static-deploy
 description: "Build and deploy SvelteKit sites statically to GitHub Pages. Use this skill when configuring static adapters, setting  GitHub Actions deployment workflows, troubleshooting prerender errors, or managing base paths for GitHub Pages project sites."
@@ -41,7 +41,7 @@ const config = {
 };
 
 export default config;
-```
+````
 
 ### Root Layout (src/routes/+layout.ts)
 
@@ -62,7 +62,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: "main"
+    branches: 'main'
 
 jobs:
   build_site:
@@ -77,10 +77,10 @@ jobs:
       - run: pnpm install
       - run: pnpm run build
         env:
-          BASE_PATH: "/${{ github.event.repository.name }}"
+          BASE_PATH: '/${{ github.event.repository.name }}'
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: "build/"
+          path: 'build/'
 
   deploy:
     needs: build_site
@@ -105,8 +105,9 @@ jobs:
 
 ```svelte
 <script>
-  import { base } from '$app/paths';
+	import { base } from '$app/paths';
 </script>
+
 <a href="{base}/about">About</a>
 <img src="{base}/images/logo.png" alt="Logo" />
 ```
@@ -118,10 +119,10 @@ jobs:
 
 ```ts
 // src/routes/blog/[slug]/+page.ts
-import type { EntryGenerator } from "./$types";
+import type { EntryGenerator } from './$types';
 
 export const entries: EntryGenerator = () => {
-  return [{ slug: "first-post" }, { slug: "second-post" }];
+	return [{ slug: 'first-post' }, { slug: 'second-post' }];
 };
 ```
 
@@ -141,7 +142,7 @@ export const entries: EntryGenerator = () => {
 **Fix:** Add to root layout if needed:
 
 ```ts
-export const trailingSlash = "always";
+export const trailingSlash = 'always';
 ```
 
 ## GitHub Pages Setup Checklist
@@ -156,5 +157,7 @@ export const trailingSlash = "always";
 8. [ ] All links use `{base}/path` pattern
 9. [ ] Dynamic routes export `entries()` function
 10. [ ] Build succeeds locally: `BASE_PATH=/repo-name pnpm build`
+
+```
 
 ```

@@ -1,4 +1,4 @@
-```chatagent
+````chatagent
 ---
 name: sveltekit-dev
 description: SvelteKit static site developer — builds components, routes, and features
@@ -78,7 +78,7 @@ Since this is a **statically-built** site deployed to **GitHub Pages**:
     <p>{description}</p>
   {/if}
 </div>
-```
+````
 
 ### File Naming
 
@@ -107,5 +107,7 @@ Since this is a **statically-built** site deployed to **GitHub Pages**:
 - Follow the project conventions in [copilot-instructions](../../.github/copilot-instructions.md)
 - Check [Svelte instructions](../../.github/instructions/svelte.instructions.md) for component patterns
 - Check [TypeScript instructions](../../.github/instructions/typescript.instructions.md) for type conventions
+
+```
 
 ```

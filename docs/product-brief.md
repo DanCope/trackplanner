@@ -99,26 +99,26 @@ A browser-based layout planner for Tomy Trainmaster (Plarail-compatible) train t
 
 ```typescript
 interface Port {
-  id: string;
-  position: Vec2; // Relative to piece origin
-  direction: Direction; // N, NE, E, SE, S, SW, W, NW
+	id: string;
+	position: Vec2; // Relative to piece origin
+	direction: Direction; // N, NE, E, SE, S, SW, W, NW
 }
 
 interface PieceDefinition {
-  type: "straight" | "curve";
-  ports: Port[];
-  svgPath: string; // SVG path data for rendering
+	type: 'straight' | 'curve';
+	ports: Port[];
+	svgPath: string; // SVG path data for rendering
 }
 
 interface PlacedPiece {
-  id: string;
-  type: PieceDefinition;
-  position: Vec2; // World position
-  rotation: number; // Degrees (multiples of 45)
-  connections: Map<string, string>; // portId → connected piece's portId
+	id: string;
+	type: PieceDefinition;
+	position: Vec2; // World position
+	rotation: number; // Degrees (multiples of 45)
+	connections: Map<string, string>; // portId → connected piece's portId
 }
 
-type Direction = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
+type Direction = 'N' | 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW';
 ```
 
 ## Decision Log

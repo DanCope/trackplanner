@@ -1,4 +1,4 @@
-```instructions
+````instructions
 ---
 applyTo: "**/*.ts,**/*.js"
 name: TypeScript Standards
@@ -33,7 +33,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
     /* typed data */
   };
 };
-```
+````
 
 - Always type load functions with generated types from `./$types`
 - Remember: load functions run at **build time** during prerendering
@@ -57,5 +57,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 - Use `$lib/` alias for `src/lib/` imports
 - Use `$app/paths`, `$app/navigation`, `$app/stores` for SvelteKit APIs
 - Group imports: svelte/kit → $lib → relative → types
+
+```
 
 ```

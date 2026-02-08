@@ -57,19 +57,19 @@ tests/                 # Playwright E2E tests
 
 ## Available Agents
 
-| Agent                              | Purpose                    | When to Use                         |
-| ---------------------------------- | -------------------------- | ----------------------------------- |
-| [sveltekit-planner](agents/sveltekit-planner.agent.md) | Architecture & planning    | Before starting any major feature   |
-| [sveltekit-dev](agents/sveltekit-dev.agent.md)         | Implementation & debugging | All hands-on development work       |
+| Agent                                                  | Purpose                    | When to Use                       |
+| ------------------------------------------------------ | -------------------------- | --------------------------------- |
+| [sveltekit-planner](agents/sveltekit-planner.agent.md) | Architecture & planning    | Before starting any major feature |
+| [sveltekit-dev](agents/sveltekit-dev.agent.md)         | Implementation & debugging | All hands-on development work     |
 
 ## Available Prompts
 
-| Prompt                                        | Purpose                                  |
-| --------------------------------------------- | ---------------------------------------- |
+| Prompt                                                      | Purpose                                  |
+| ----------------------------------------------------------- | ---------------------------------------- |
 | [/scaffold-sveltekit](prompts/scaffold-sveltekit.prompt.md) | Initialize new SvelteKit project         |
-| [/new-page](prompts/new-page.prompt.md)       | Create a new route with proper structure |
-| [/new-component](prompts/new-component.prompt.md) | Create a reusable component with tests   |
-| [/verify-static](prompts/verify-static.prompt.md) | Pre-deployment verification pipeline     |
+| [/new-page](prompts/new-page.prompt.md)                     | Create a new route with proper structure |
+| [/new-component](prompts/new-component.prompt.md)           | Create a reusable component with tests   |
+| [/verify-static](prompts/verify-static.prompt.md)           | Pre-deployment verification pipeline     |
 
 ## Auto-Applied Instructions
 
@@ -137,23 +137,23 @@ The app models train track pieces with connection ports:
 
 ```ts
 interface Port {
-  id: string;
-  position: Vec2;        // Relative to piece origin
-  direction: Direction;  // N, NE, E, SE, S, SW, W, NW
+	id: string;
+	position: Vec2; // Relative to piece origin
+	direction: Direction; // N, NE, E, SE, S, SW, W, NW
 }
 
 interface PieceDefinition {
-  type: "straight" | "curve";
-  ports: Port[];
-  svgPath: string;
+	type: 'straight' | 'curve';
+	ports: Port[];
+	svgPath: string;
 }
 
 interface PlacedPiece {
-  id: string;
-  type: PieceDefinition;
-  position: Vec2;        // World position
-  rotation: number;      // Degrees (multiples of 45)
-  connections: Map<string, string>;  // portId → connected piece's portId
+	id: string;
+	type: PieceDefinition;
+	position: Vec2; // World position
+	rotation: number; // Degrees (multiples of 45)
+	connections: Map<string, string>; // portId → connected piece's portId
 }
 ```
 

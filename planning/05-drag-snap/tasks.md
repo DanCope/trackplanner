@@ -9,52 +9,52 @@ Track active drag operation and preview state.
 1. Create `src/lib/stores/drag.svelte.ts`:
 
    ```ts
-   import { $state } from "svelte";
-   import type { PieceDefinition, Vec2 } from "$lib/types";
+   import { $state } from 'svelte';
+   import type { PieceDefinition, Vec2 } from '$lib/types';
 
    class DragStore {
-     isActive = $state(false);
-     activePieceDefinition = $state<PieceDefinition | null>(null);
-     cursorPosition = $state<Vec2>({ x: 0, y: 0 });
-     preRotation = $state(0); // User-applied rotation (45° steps)
-     snapTarget = $state<{ pieceId: string; portId: string } | null>(null);
-     snappedPosition = $state<Vec2 | null>(null);
-     snappedRotation = $state(0);
+   	isActive = $state(false);
+   	activePieceDefinition = $state<PieceDefinition | null>(null);
+   	cursorPosition = $state<Vec2>({ x: 0, y: 0 });
+   	preRotation = $state(0); // User-applied rotation (45° steps)
+   	snapTarget = $state<{ pieceId: string; portId: string } | null>(null);
+   	snappedPosition = $state<Vec2 | null>(null);
+   	snappedRotation = $state(0);
 
-     startDrag(definition: PieceDefinition): void {
-       this.isActive = true;
-       this.activePieceDefinition = definition;
-       this.preRotation = 0;
-       this.snapTarget = null;
-     }
+   	startDrag(definition: PieceDefinition): void {
+   		this.isActive = true;
+   		this.activePieceDefinition = definition;
+   		this.preRotation = 0;
+   		this.snapTarget = null;
+   	}
 
-     updateCursorPosition(pos: Vec2): void {
-       this.cursorPosition = pos;
-     }
+   	updateCursorPosition(pos: Vec2): void {
+   		this.cursorPosition = pos;
+   	}
 
-     rotatePreview(steps: number): void {
-       this.preRotation = (this.preRotation + steps * 45 + 360) % 360;
-     }
+   	rotatePreview(steps: number): void {
+   		this.preRotation = (this.preRotation + steps * 45 + 360) % 360;
+   	}
 
-     setSnapTarget(pieceId: string | null, portId: string | null): void {
-       if (pieceId && portId) {
-         this.snapTarget = { pieceId, portId };
-       } else {
-         this.snapTarget = null;
-       }
-     }
+   	setSnapTarget(pieceId: string | null, portId: string | null): void {
+   		if (pieceId && portId) {
+   			this.snapTarget = { pieceId, portId };
+   		} else {
+   			this.snapTarget = null;
+   		}
+   	}
 
-     setSnappedTransform(pos: Vec2, rotation: number): void {
-       this.snappedPosition = pos;
-       this.snappedRotation = rotation;
-     }
+   	setSnappedTransform(pos: Vec2, rotation: number): void {
+   		this.snappedPosition = pos;
+   		this.snappedRotation = rotation;
+   	}
 
-     endDrag(): void {
-       this.isActive = false;
-       this.activePieceDefinition = null;
-       this.preRotation = 0;
-       this.snapTarget = null;
-     }
+   	endDrag(): void {
+   		this.isActive = false;
+   		this.activePieceDefinition = null;
+   		this.preRotation = 0;
+   		this.snapTarget = null;
+   	}
    }
 
    export const dragStore = new DragStore();
@@ -75,13 +75,13 @@ Create utility to compute snapped position/rotation.
 1. Create `src/lib/utils/snap.ts`:
 
    ```ts
-   import type { Vec2, PlacedPiece, PieceDefinition } from "$lib/types";
-   import { rotateVec2, directionToAngle, rotateDirection, oppositeDirection } from "./geometry";
-   import { PLARAIL_CONFIG } from "$lib/config";
+   import type { Vec2, PlacedPiece, PieceDefinition } from '$lib/types';
+   import { rotateVec2, directionToAngle, rotateDirection, oppositeDirection } from './geometry';
+   import { PLARAIL_CONFIG } from '$lib/config';
 
    export interface SnapResult {
-     position: Vec2;
-     rotation: number;
+   	position: Vec2;
+   	rotation: number;
    }
 
    /**
@@ -89,54 +89,55 @@ Create utility to compute snapped position/rotation.
     * to a target port on a placed piece
     */
    export function computeSnapTransform(
-     draggedDefinition: PieceDefinition,
-     draggedPortId: string,
-     targetPiece: PlacedPiece,
-     targetPortId: string,
-     preRotation: number,
+   	draggedDefinition: PieceDefinition,
+   	draggedPortId: string,
+   	targetPiece: PlacedPiece,
+   	targetPortId: string,
+   	preRotation: number
    ): SnapResult {
-     // Get port definitions
-     const draggedPort = draggedDefinition.ports.find((p) => p.id === draggedPortId);
-     const targetPort = targetPiece.definition.ports.find((p) => p.id === targetPortId);
+   	// Get port definitions
+   	const draggedPort = draggedDefinition.ports.find((p) => p.id === draggedPortId);
+   	const targetPort = targetPiece.definition.ports.find((p) => p.id === targetPortId);
 
-     if (!draggedPort || !targetPort) {
-       throw new Error("Port not found");
-     }
+   	if (!draggedPort || !targetPort) {
+   		throw new Error('Port not found');
+   	}
 
-     // Compute target port world position
-     const targetAngleRad = (targetPiece.rotation * Math.PI) / 180;
-     const cos = Math.cos(targetAngleRad);
-     const sin = Math.sin(targetAngleRad);
-     const relX = targetPort.position.x * cos - targetPort.position.y * sin;
-     const relY = targetPort.position.x * sin + targetPort.position.y * cos;
-     const targetWorldPos = {
-       x: targetPiece.position.x + relX,
-       y: targetPiece.position.y + relY,
-     };
+   	// Compute target port world position
+   	const targetAngleRad = (targetPiece.rotation * Math.PI) / 180;
+   	const cos = Math.cos(targetAngleRad);
+   	const sin = Math.sin(targetAngleRad);
+   	const relX = targetPort.position.x * cos - targetPort.position.y * sin;
+   	const relY = targetPort.position.x * sin + targetPort.position.y * cos;
+   	const targetWorldPos = {
+   		x: targetPiece.position.x + relX,
+   		y: targetPiece.position.y + relY
+   	};
 
-     // Determine rotation to connect ports
-     // Target's port faces outward in its direction
-     // Dragged piece's port must face opposite direction to align
-     const requiredDirection = oppositeDirection(targetPort.direction);
-     const currentDragDirection = rotateDirection(draggedPort.direction, preRotation / 45);
-     const directionDiff = directionToAngle(requiredDirection) - directionToAngle(currentDragDirection);
-     const snapRotation = (Math.round(directionDiff / 45) * 45 + 360) % 360;
-     const finalRotation = (preRotation + snapRotation) % 360;
+   	// Determine rotation to connect ports
+   	// Target's port faces outward in its direction
+   	// Dragged piece's port must face opposite direction to align
+   	const requiredDirection = oppositeDirection(targetPort.direction);
+   	const currentDragDirection = rotateDirection(draggedPort.direction, preRotation / 45);
+   	const directionDiff =
+   		directionToAngle(requiredDirection) - directionToAngle(currentDragDirection);
+   	const snapRotation = (Math.round(directionDiff / 45) * 45 + 360) % 360;
+   	const finalRotation = (preRotation + snapRotation) % 360;
 
-     // Compute position: dragged piece should be positioned so its port aligns with target
-     // Rotate dragged port position by final rotation to get absolute displacement
-     const rotatedDragPort = rotateVec2(draggedPort.position, { x: 0, y: 0 }, finalRotation);
+   	// Compute position: dragged piece should be positioned so its port aligns with target
+   	// Rotate dragged port position by final rotation to get absolute displacement
+   	const rotatedDragPort = rotateVec2(draggedPort.position, { x: 0, y: 0 }, finalRotation);
 
-     // Position of dragged piece origin = target port position - rotated dragged port position
-     const snappedPos = {
-       x: targetWorldPos.x - rotatedDragPort.x,
-       y: targetWorldPos.y - rotatedDragPort.y,
-     };
+   	// Position of dragged piece origin = target port position - rotated dragged port position
+   	const snappedPos = {
+   		x: targetWorldPos.x - rotatedDragPort.x,
+   		y: targetWorldPos.y - rotatedDragPort.y
+   	};
 
-     return {
-       position: snappedPos,
-       rotation: finalRotation,
-     };
+   	return {
+   		position: snappedPos,
+   		rotation: finalRotation
+   	};
    }
    ```
 
@@ -175,65 +176,65 @@ Draggable palette of piece types.
 
    ```svelte
    <script lang="ts">
-     import { shortStraight, curve45 } from '$lib/pieces';
-     import { dragStore } from '$lib/stores/drag.svelte';
+   	import { shortStraight, curve45 } from '$lib/pieces';
+   	import { dragStore } from '$lib/stores/drag.svelte';
 
-     const pieces = [
-       { name: 'Straight', definition: shortStraight },
-       { name: 'Curve 45°', definition: curve45 },
-     ];
+   	const pieces = [
+   		{ name: 'Straight', definition: shortStraight },
+   		{ name: 'Curve 45°', definition: curve45 }
+   	];
 
-     function handleDragStart(definition: any) {
-       dragStore.startDrag(definition);
-       document.addEventListener('mousemove', handleMouseMove);
-       document.addEventListener('mouseup', handleMouseUp);
-     }
+   	function handleDragStart(definition: any) {
+   		dragStore.startDrag(definition);
+   		document.addEventListener('mousemove', handleMouseMove);
+   		document.addEventListener('mouseup', handleMouseUp);
+   	}
 
-     function handleMouseMove(e: MouseEvent) {
-       dragStore.updateCursorPosition({ x: e.clientX, y: e.clientY });
-     }
+   	function handleMouseMove(e: MouseEvent) {
+   		dragStore.updateCursorPosition({ x: e.clientX, y: e.clientY });
+   	}
 
-     function handleMouseUp() {
-       dragStore.endDrag();
-       document.removeEventListener('mousemove', handleMouseMove);
-       document.removeEventListener('mouseup', handleMouseUp);
-     }
+   	function handleMouseUp() {
+   		dragStore.endDrag();
+   		document.removeEventListener('mousemove', handleMouseMove);
+   		document.removeEventListener('mouseup', handleMouseUp);
+   	}
    </script>
 
    <div class="panel">
-     <h2>Pieces</h2>
-     {#each pieces as item}
-       <div
-         class="piece-item"
-         draggable="true"
-         on:dragstart={() => handleDragStart(item.definition)}
-         on:dragend={handleMouseUp}
-       >
-         {item.name}
-       </div>
-     {/each}
+   	<h2>Pieces</h2>
+   	{#each pieces as item}
+   		<div
+   			class="piece-item"
+   			draggable="true"
+   			on:dragstart={() => handleDragStart(item.definition)}
+   			on:dragend={handleMouseUp}
+   		>
+   			{item.name}
+   		</div>
+   	{/each}
    </div>
 
    <style>
-     .panel {
-       width: 150px;
-       padding: 1rem;
-       background: #f5f5f5;
-       border-right: 1px solid #ccc;
-     }
+   	.panel {
+   		width: 150px;
+   		padding: 1rem;
+   		background: #f5f5f5;
+   		border-right: 1px solid #ccc;
+   	}
 
-     .piece-item {
-       padding: 0.5rem;
-       margin: 0.5rem 0;
-       background: white;
-       border: 1px solid #ddd;
-       cursor: grab;
-       user-select: none;
-     }
+   	.piece-item {
+   		padding: 0.5rem;
+   		margin: 0.5rem 0;
+   		background: white;
+   		border: 1px solid #ddd;
+   		cursor: grab;
+   		user-select: none;
+   	}
 
-     .piece-item:active {
-       cursor: grabbing;
-     }
+   	.piece-item:active {
+   		cursor: grabbing;
+   	}
    </style>
    ```
 
@@ -253,32 +254,32 @@ Ghost piece following cursor during drag.
 
    ```svelte
    <script lang="ts">
-     import { dragStore } from '$lib/stores/drag.svelte';
-     import TrackPiece from './TrackPiece.svelte';
-     import type { PlacedPiece } from '$lib/types';
+   	import { dragStore } from '$lib/stores/drag.svelte';
+   	import TrackPiece from './TrackPiece.svelte';
+   	import type { PlacedPiece } from '$lib/types';
 
-     function getDragPreviewPiece(): PlacedPiece | null {
-       if (!dragStore.isActive || !dragStore.activePieceDefinition) return null;
+   	function getDragPreviewPiece(): PlacedPiece | null {
+   		if (!dragStore.isActive || !dragStore.activePieceDefinition) return null;
 
-       const pos = dragStore.snappedPosition || dragStore.cursorPosition;
-       const rotation = dragStore.snappedRotation ?? dragStore.preRotation;
+   		const pos = dragStore.snappedPosition || dragStore.cursorPosition;
+   		const rotation = dragStore.snappedRotation ?? dragStore.preRotation;
 
-       return {
-         id: '__drag-preview__',
-         definition: dragStore.activePieceDefinition,
-         position: pos,
-         rotation,
-         connections: new Map(),
-       };
-     }
+   		return {
+   			id: '__drag-preview__',
+   			definition: dragStore.activePieceDefinition,
+   			position: pos,
+   			rotation,
+   			connections: new Map()
+   		};
+   	}
 
-     const previewPiece = $derived(getDragPreviewPiece());
+   	const previewPiece = $derived(getDragPreviewPiece());
    </script>
 
    {#if previewPiece}
-     <svg style="position: absolute; pointer-events: none; z-index: 1000;">
-       <TrackPiece piece={previewPiece} />
-     </svg>
+   	<svg style="position: absolute; pointer-events: none; z-index: 1000;">
+   		<TrackPiece piece={previewPiece} />
+   	</svg>
    {/if}
    ```
 
@@ -335,37 +336,37 @@ Arrange panel + canvas side by side.
 
    ```svelte
    <script>
-     import PiecePanel from '$lib/components/PiecePanel.svelte';
-     import Canvas from '$lib/components/Canvas.svelte';
-     import DragPreview from '$lib/components/DragPreview.svelte';
+   	import PiecePanel from '$lib/components/PiecePanel.svelte';
+   	import Canvas from '$lib/components/Canvas.svelte';
+   	import DragPreview from '$lib/components/DragPreview.svelte';
    </script>
 
    <main>
-     <div class="layout">
-       <PiecePanel />
-       <div class="content">
-         <Canvas />
-         <DragPreview />
-       </div>
-     </div>
+   	<div class="layout">
+   		<PiecePanel />
+   		<div class="content">
+   			<Canvas />
+   			<DragPreview />
+   		</div>
+   	</div>
    </main>
 
    <style>
-     main {
-       height: 100vh;
-       display: flex;
-       flex-direction: column;
-     }
+   	main {
+   		height: 100vh;
+   		display: flex;
+   		flex-direction: column;
+   	}
 
-     .layout {
-       display: flex;
-       flex-grow: 1;
-     }
+   	.layout {
+   		display: flex;
+   		flex-grow: 1;
+   	}
 
-     .content {
-       flex-grow: 1;
-       position: relative;
-     }
+   	.content {
+   		flex-grow: 1;
+   		position: relative;
+   	}
    </style>
    ```
 

@@ -49,14 +49,14 @@ Configure GitHub Pages base path handling.
 2. Create `.env.local` (not committed) with actual base path for local dev
 3. Update `svelte.config.js` to read `BASE_PATH`:
    ```js
-   const baseUrl = process.env.BASE_PATH || "/";
+   const baseUrl = process.env.BASE_PATH || '/';
    export default {
-     kit: {
-       paths: {
-         base: baseUrl,
-       },
-       // ... rest of config
-     },
+   	kit: {
+   		paths: {
+   			base: baseUrl
+   		}
+   		// ... rest of config
+   	}
    };
    ```
 4. Verify `pnpm build` works with both `BASE_PATH=/` and a repo-specific path
@@ -78,31 +78,31 @@ Set up Tailwind CSS with v4 and proper configuration.
 2. Create `tailwind.config.ts`:
 
    ```ts
-   import type { Config } from "tailwindcss";
+   import type { Config } from 'tailwindcss';
 
    export default {
-     content: ["./src/**/*.{html,js,svelte,ts}"],
-     theme: {
-       extend: {},
-     },
-     plugins: [],
+   	content: ['./src/**/*.{html,js,svelte,ts}'],
+   	theme: {
+   		extend: {}
+   	},
+   	plugins: []
    } satisfies Config;
    ```
 
 3. Create `postcss.config.js`:
    ```js
    export default {
-     plugins: {
-       tailwindcss: {},
-       autoprefixer: {},
-     },
+   	plugins: {
+   		tailwindcss: {},
+   		autoprefixer: {}
+   	}
    };
    ```
 4. Create `src/app.css`:
    ```css
-   @import "tailwindcss/base";
-   @import "tailwindcss/components";
-   @import "tailwindcss/utilities";
+   @import 'tailwindcss/base';
+   @import 'tailwindcss/components';
+   @import 'tailwindcss/utilities';
    ```
 5. Import `src/app.css` in `src/routes/+layout.svelte`
 6. Test: create a page with Tailwind classes, verify styles apply in dev and build
@@ -123,15 +123,15 @@ Ensure strict type checking is enforced.
 1. Update `tsconfig.json`:
    ```json
    {
-     "compilerOptions": {
-       "strict": true,
-       "noImplicitAny": true,
-       "strictNullChecks": true,
-       "strictFunctionTypes": true,
-       "esModuleInterop": true,
-       "skipLibCheck": true,
-       "forceConsistentCasingInFileNames": true
-     }
+   	"compilerOptions": {
+   		"strict": true,
+   		"noImplicitAny": true,
+   		"strictNullChecks": true,
+   		"strictFunctionTypes": true,
+   		"esModuleInterop": true,
+   		"skipLibCheck": true,
+   		"forceConsistentCasingInFileNames": true
+   	}
    }
    ```
 2. Run `pnpm check` — should pass with no errors
@@ -154,15 +154,15 @@ Configure unit testing with Vitest and @testing-library/svelte.
 2. Create `vite.config.ts`:
 
    ```ts
-   import { defineConfig } from "vitest/config";
-   import { sveltekit } from "@sveltejs/kit/vite";
+   import { defineConfig } from 'vitest/config';
+   import { sveltekit } from '@sveltejs/kit/vite';
 
    export default defineConfig({
-     plugins: [sveltekit()],
-     test: {
-       globals: true,
-       environment: "jsdom",
-     },
+   	plugins: [sveltekit()],
+   	test: {
+   		globals: true,
+   		environment: 'jsdom'
+   	}
    });
    ```
 
@@ -187,24 +187,24 @@ Configure end-to-end testing with Playwright.
 2. Create `playwright.config.ts`:
 
    ```ts
-   import { defineConfig, devices } from "@playwright/test";
+   import { defineConfig, devices } from '@playwright/test';
 
    export default defineConfig({
-     testDir: "./tests",
-     fullyParallel: true,
-     webServer: {
-       command: "pnpm build && pnpm preview",
-       port: 4173,
-       reuseExistingServer: false,
-     },
-     use: {
-       baseURL: "http://localhost:4173/" + (process.env.BASE_PATH || "").slice(1),
-     },
-     projects: [
-       { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-       { name: "webkit", use: { ...devices["Desktop Safari"] } },
-       { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-     ],
+   	testDir: './tests',
+   	fullyParallel: true,
+   	webServer: {
+   		command: 'pnpm build && pnpm preview',
+   		port: 4173,
+   		reuseExistingServer: false
+   	},
+   	use: {
+   		baseURL: 'http://localhost:4173/' + (process.env.BASE_PATH || '').slice(1)
+   	},
+   	projects: [
+   		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+   		{ name: 'webkit', use: { ...devices['Desktop Safari'] } },
+   		{ name: 'firefox', use: { ...devices['Desktop Firefox'] } }
+   	]
    });
    ```
 
@@ -212,11 +212,11 @@ Configure end-to-end testing with Playwright.
 4. Create `tests/home.test.ts`:
 
    ```ts
-   import { test, expect } from "@playwright/test";
+   import { test, expect } from '@playwright/test';
 
-   test("home page loads", async ({ page }) => {
-     await page.goto("/");
-     expect(page).toBeTruthy();
+   test('home page loads', async ({ page }) => {
+   	await page.goto('/');
+   	expect(page).toBeTruthy();
    });
    ```
 
@@ -295,7 +295,7 @@ Set up the foundational Svelte pages.
 
    ```svelte
    <script lang="ts">
-     import '../app.css';
+   	import '../app.css';
    </script>
 
    <slot />
@@ -307,8 +307,7 @@ Set up the foundational Svelte pages.
    ```
 3. Create `src/routes/+page.svelte`:
    ```svelte
-   <h1>TrackPlanner</h1>
-   <p>Layout planner coming soon...</p>
+   <h1>TrackPlanner</h1><p>Layout planner coming soon...</p>
    ```
 4. Verify `pnpm dev` renders the page with Tailwind classes applied
 

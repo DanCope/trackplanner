@@ -1,4 +1,4 @@
-```instructions
+````instructions
 ---
 applyTo: "**/*.test.ts,**/*.spec.ts,**/tests/**,**/e2e/**"
 name: Testing Standards
@@ -28,7 +28,7 @@ describe("MyComponent", () => {
     expect(screen.getByText("Hello")).toBeInTheDocument();
   });
 });
-```
+````
 
 ## E2E Tests (Playwright)
 
@@ -50,5 +50,7 @@ describe("MyComponent", () => {
 - Aim for >80% branch coverage on utility functions
 - Component tests should cover: rendering, props, user interactions, edge cases
 - E2E tests should cover: navigation, page content, error states
+
+```
 
 ```

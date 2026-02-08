@@ -101,23 +101,23 @@ pnpm test:e2e     # Run Playwright tests
 
 ```ts
 interface Port {
-  id: string;
-  position: Vec2; // Relative to piece origin
-  direction: Direction; // N, NE, E, SE, S, SW, W, NW
+	id: string;
+	position: Vec2; // Relative to piece origin
+	direction: Direction; // N, NE, E, SE, S, SW, W, NW
 }
 
 interface PieceDefinition {
-  type: "straight" | "curve";
-  ports: Port[];
-  svgPath: string;
+	type: 'straight' | 'curve';
+	ports: Port[];
+	svgPath: string;
 }
 
 interface PlacedPiece {
-  id: string;
-  type: PieceDefinition;
-  position: Vec2; // World position
-  rotation: number; // Degrees (multiples of 45)
-  connections: Map<string, string>; // portId → connected piece's portId
+	id: string;
+	type: PieceDefinition;
+	position: Vec2; // World position
+	rotation: number; // Degrees (multiples of 45)
+	connections: Map<string, string>; // portId → connected piece's portId
 }
 ```
 

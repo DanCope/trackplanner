@@ -10,68 +10,68 @@ Button for deleting selected pieces.
 
    ```svelte
    <script lang="ts">
-     import { selectionStore } from '$lib/stores/selection.svelte';
-     import { layoutStore } from '$lib/stores/layout.svelte';
+   	import { selectionStore } from '$lib/stores/selection.svelte';
+   	import { layoutStore } from '$lib/stores/layout.svelte';
 
-     function handleDelete() {
-       if (selectionStore.selectedPieceId) {
-         const piece = layoutStore.getPiece(selectionStore.selectedPieceId);
-         if (piece) {
-           // Clean up connections
-           const allPieces = layoutStore.pieces;
-           allPieces.forEach(p => {
-             const portsToRemove: string[] = [];
-             p.connections.forEach((targetId, portId) => {
-               if (targetId.startsWith(selectionStore.selectedPieceId + ':')) {
-                 portsToRemove.push(portId);
-               }
-             });
-             portsToRemove.forEach(portId => p.connections.delete(portId));
-           });
+   	function handleDelete() {
+   		if (selectionStore.selectedPieceId) {
+   			const piece = layoutStore.getPiece(selectionStore.selectedPieceId);
+   			if (piece) {
+   				// Clean up connections
+   				const allPieces = layoutStore.pieces;
+   				allPieces.forEach((p) => {
+   					const portsToRemove: string[] = [];
+   					p.connections.forEach((targetId, portId) => {
+   						if (targetId.startsWith(selectionStore.selectedPieceId + ':')) {
+   							portsToRemove.push(portId);
+   						}
+   					});
+   					portsToRemove.forEach((portId) => p.connections.delete(portId));
+   				});
 
-           layoutStore.removePiece(selectionStore.selectedPieceId);
-           selectionStore.deselect();
-         }
-       }
-     }
+   				layoutStore.removePiece(selectionStore.selectedPieceId);
+   				selectionStore.deselect();
+   			}
+   		}
+   	}
    </script>
 
    <div class="toolbar">
-     <button on:click={handleDelete} disabled={!selectionStore.selectedPieceId}>
-       Delete Selected
-     </button>
-     <span class="info">Pieces: {layoutStore.pieces.length}</span>
+   	<button on:click={handleDelete} disabled={!selectionStore.selectedPieceId}>
+   		Delete Selected
+   	</button>
+   	<span class="info">Pieces: {layoutStore.pieces.length}</span>
    </div>
 
    <style>
-     .toolbar {
-       display: flex;
-       gap: 1rem;
-       align-items: center;
-       padding: 1rem;
-       background: #f5f5f5;
-       border-bottom: 1px solid #ccc;
-     }
+   	.toolbar {
+   		display: flex;
+   		gap: 1rem;
+   		align-items: center;
+   		padding: 1rem;
+   		background: #f5f5f5;
+   		border-bottom: 1px solid #ccc;
+   	}
 
-     button {
-       padding: 0.5rem 1rem;
-       background: #ef4444;
-       color: white;
-       border: none;
-       border-radius: 4px;
-       cursor: pointer;
-     }
+   	button {
+   		padding: 0.5rem 1rem;
+   		background: #ef4444;
+   		color: white;
+   		border: none;
+   		border-radius: 4px;
+   		cursor: pointer;
+   	}
 
-     button:disabled {
-       background: #ccc;
-       cursor: not-allowed;
-     }
+   	button:disabled {
+   		background: #ccc;
+   		cursor: not-allowed;
+   	}
 
-     .info {
-       margin-left: auto;
-       font-size: 0.9rem;
-       color: #666;
-     }
+   	.info {
+   		margin-left: auto;
+   		font-size: 0.9rem;
+   		color: #666;
+   	}
    </style>
    ```
 
@@ -91,29 +91,29 @@ Handle Delete and Backspace keys to remove selected piece.
 
    ```ts
    function handleKeyDown(e: KeyboardEvent) {
-     if ((e.key === "Delete" || e.key === "Backspace") && selectionStore.selectedPieceId) {
-       e.preventDefault();
+   	if ((e.key === 'Delete' || e.key === 'Backspace') && selectionStore.selectedPieceId) {
+   		e.preventDefault();
 
-       const piece = layoutStore.getPiece(selectionStore.selectedPieceId);
-       if (piece) {
-         const allPieces = layoutStore.pieces;
-         allPieces.forEach((p) => {
-           const portsToRemove: string[] = [];
-           p.connections.forEach((targetId, portId) => {
-             if (targetId.startsWith(selectionStore.selectedPieceId! + ":")) {
-               portsToRemove.push(portId);
-             }
-           });
-           portsToRemove.forEach((portId) => p.connections.delete(portId));
-         });
+   		const piece = layoutStore.getPiece(selectionStore.selectedPieceId);
+   		if (piece) {
+   			const allPieces = layoutStore.pieces;
+   			allPieces.forEach((p) => {
+   				const portsToRemove: string[] = [];
+   				p.connections.forEach((targetId, portId) => {
+   					if (targetId.startsWith(selectionStore.selectedPieceId! + ':')) {
+   						portsToRemove.push(portId);
+   					}
+   				});
+   				portsToRemove.forEach((portId) => p.connections.delete(portId));
+   			});
 
-         layoutStore.removePiece(selectionStore.selectedPieceId);
-         selectionStore.deselect();
-       }
-     }
+   			layoutStore.removePiece(selectionStore.selectedPieceId);
+   			selectionStore.deselect();
+   		}
+   	}
    }
 
-   window.addEventListener("keydown", handleKeyDown);
+   window.addEventListener('keydown', handleKeyDown);
    ```
 
 2. Test: select piece, press Delete, piece is removed
@@ -133,12 +133,17 @@ Improve visual feedback for selected pieces.
 1. Update `src/lib/components/TrackPiece.svelte`:
    ```svelte
    {#if isSelected}
-     <rect
-       x="-30" y="-30" width="60" height="60"
-       stroke="blue" stroke-width="2" fill="none"
-       stroke-dasharray="5,5"
-     />
-     <circle cx="0" cy="0" r="35" stroke="blue" stroke-width="1" fill="none" opacity="0.5" />
+   	<rect
+   		x="-30"
+   		y="-30"
+   		width="60"
+   		height="60"
+   		stroke="blue"
+   		stroke-width="2"
+   		fill="none"
+   		stroke-dasharray="5,5"
+   	/>
+   	<circle cx="0" cy="0" r="35" stroke="blue" stroke-width="1" fill="none" opacity="0.5" />
    {/if}
    ```
 2. Add CSS for glow effect if selected
@@ -159,22 +164,22 @@ Add toolbar to page layout above canvas.
 
    ```svelte
    <script>
-     import Toolbar from '$lib/components/Toolbar.svelte';
-     import PiecePanel from '$lib/components/PiecePanel.svelte';
-     import Canvas from '$lib/components/Canvas.svelte';
-     import DragPreview from '$lib/components/DragPreview.svelte';
+   	import Toolbar from '$lib/components/Toolbar.svelte';
+   	import PiecePanel from '$lib/components/PiecePanel.svelte';
+   	import Canvas from '$lib/components/Canvas.svelte';
+   	import DragPreview from '$lib/components/DragPreview.svelte';
    </script>
 
    <Toolbar />
 
    <main>
-     <div class="layout">
-       <PiecePanel />
-       <div class="content">
-         <Canvas />
-         <DragPreview />
-       </div>
-     </div>
+   	<div class="layout">
+   		<PiecePanel />
+   		<div class="content">
+   			<Canvas />
+   			<DragPreview />
+   		</div>
+   	</div>
    </main>
    ```
 

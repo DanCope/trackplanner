@@ -1,4 +1,4 @@
-```instructions
+````instructions
 ---
 applyTo: "**/*.svelte"
 name: Svelte Component Standards
@@ -39,7 +39,7 @@ Follow this order within `<script lang="ts">`:
 
   let { required, optional = 42, children }: Props = $props();
 </script>
-```
+````
 
 ## Snippets (Svelte 5)
 
@@ -71,5 +71,7 @@ Follow this order within `<script lang="ts">`:
 - Always import `base` from `$app/paths` for links: `<a href="{base}/about">`
 - Never use `goto()` without accounting for base path
 - No browser APIs in module-level code — guard with `$effect()` or `onMount()`
+
+```
 
 ```

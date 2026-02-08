@@ -9,40 +9,40 @@ Create reactive store for managing placed pieces.
 1. Create `src/lib/stores/layout.svelte.ts`:
 
    ```ts
-   import { $state } from "svelte";
-   import type { PlacedPiece, Port } from "$lib/types";
+   import { $state } from 'svelte';
+   import type { PlacedPiece, Port } from '$lib/types';
 
    class LayoutStore {
-     pieces = $state<PlacedPiece[]>([]);
+   	pieces = $state<PlacedPiece[]>([]);
 
-     addPiece(piece: PlacedPiece): void {
-       this.pieces.push(piece);
-     }
+   	addPiece(piece: PlacedPiece): void {
+   		this.pieces.push(piece);
+   	}
 
-     removePiece(id: string): void {
-       this.pieces = this.pieces.filter((p) => p.id !== id);
-       // Also remove all connections to/from this piece
-       this.pieces.forEach((p) => {
-         const portsToRemove: string[] = [];
-         p.connections.forEach((targetId, portId) => {
-           if (targetId.startsWith(id + ":")) {
-             portsToRemove.push(portId);
-           }
-         });
-         portsToRemove.forEach((portId) => p.connections.delete(portId));
-       });
-     }
+   	removePiece(id: string): void {
+   		this.pieces = this.pieces.filter((p) => p.id !== id);
+   		// Also remove all connections to/from this piece
+   		this.pieces.forEach((p) => {
+   			const portsToRemove: string[] = [];
+   			p.connections.forEach((targetId, portId) => {
+   				if (targetId.startsWith(id + ':')) {
+   					portsToRemove.push(portId);
+   				}
+   			});
+   			portsToRemove.forEach((portId) => p.connections.delete(portId));
+   		});
+   	}
 
-     updatePiece(id: string, updates: Partial<PlacedPiece>): void {
-       const piece = this.pieces.find((p) => p.id === id);
-       if (piece) {
-         Object.assign(piece, updates);
-       }
-     }
+   	updatePiece(id: string, updates: Partial<PlacedPiece>): void {
+   		const piece = this.pieces.find((p) => p.id === id);
+   		if (piece) {
+   			Object.assign(piece, updates);
+   		}
+   	}
 
-     getPiece(id: string): PlacedPiece | undefined {
-       return this.pieces.find((p) => p.id === id);
-     }
+   	getPiece(id: string): PlacedPiece | undefined {
+   		return this.pieces.find((p) => p.id === id);
+   	}
    }
 
    export const layoutStore = new LayoutStore();
@@ -65,22 +65,22 @@ Track which piece is currently selected.
 1. Create `src/lib/stores/selection.svelte.ts`:
 
    ```ts
-   import { $state } from "svelte";
+   import { $state } from 'svelte';
 
    class SelectionStore {
-     selectedPieceId = $state<string | null>(null);
+   	selectedPieceId = $state<string | null>(null);
 
-     select(id: string | null): void {
-       this.selectedPieceId = id;
-     }
+   	select(id: string | null): void {
+   		this.selectedPieceId = id;
+   	}
 
-     deselect(): void {
-       this.selectedPieceId = null;
-     }
+   	deselect(): void {
+   		this.selectedPieceId = null;
+   	}
 
-     isSelected(id: string): boolean {
-       return this.selectedPieceId === id;
-     }
+   	isSelected(id: string): boolean {
+   		return this.selectedPieceId === id;
+   	}
    }
 
    export const selectionStore = new SelectionStore();
@@ -101,87 +101,96 @@ Create utility functions for port matching and connection.
 1. Create `src/lib/utils/connections.ts`:
 
    ```ts
-   import type { Vec2, Port, PlacedPiece } from "$lib/types";
-   import { distanceVec2, oppositeDirection } from "./geometry";
-   import { PLARAIL_CONFIG } from "$lib/config";
+   import type { Vec2, Port, PlacedPiece } from '$lib/types';
+   import { distanceVec2, oppositeDirection } from './geometry';
+   import { PLARAIL_CONFIG } from '$lib/config';
 
    /**
     * Find the nearest open port on any piece within snap radius
     */
    export function findSnapTarget(
-     draggedPort: {
-       worldPosition: Vec2;
-       direction: string;
-     },
-     allPieces: PlacedPiece[],
-     draggedPieceId: string,
-     snapRadius: number = PLARAIL_CONFIG.snapRadius,
+   	draggedPort: {
+   		worldPosition: Vec2;
+   		direction: string;
+   	},
+   	allPieces: PlacedPiece[],
+   	draggedPieceId: string,
+   	snapRadius: number = PLARAIL_CONFIG.snapRadius
    ): { pieceId: string; port: Port; distance: number } | null {
-     let closest: { pieceId: string; port: Port; distance: number } | null = null;
+   	let closest: { pieceId: string; port: Port; distance: number } | null = null;
 
-     for (const piece of allPieces) {
-       if (piece.id === draggedPieceId) continue; // Can't connect to self
+   	for (const piece of allPieces) {
+   		if (piece.id === draggedPieceId) continue; // Can't connect to self
 
-       for (const port of piece.definition.ports) {
-         // Skip if this port is already connected
-         if (piece.connections.has(port.id)) continue;
+   		for (const port of piece.definition.ports) {
+   			// Skip if this port is already connected
+   			if (piece.connections.has(port.id)) continue;
 
-         // Skip if directions don't match
-         if (port.direction !== draggedPort.direction) continue;
+   			// Skip if directions don't match
+   			if (port.direction !== draggedPort.direction) continue;
 
-         // Compute world position of target port
-         const rotRad = (piece.rotation * Math.PI) / 180;
-         const cos = Math.cos(rotRad);
-         const sin = Math.sin(rotRad);
-         const relX = port.position.x * cos - port.position.y * sin;
-         const relY = port.position.x * sin + port.position.y * cos;
-         const worldPos = {
-           x: piece.position.x + relX,
-           y: piece.position.y + relY,
-         };
+   			// Compute world position of target port
+   			const rotRad = (piece.rotation * Math.PI) / 180;
+   			const cos = Math.cos(rotRad);
+   			const sin = Math.sin(rotRad);
+   			const relX = port.position.x * cos - port.position.y * sin;
+   			const relY = port.position.x * sin + port.position.y * cos;
+   			const worldPos = {
+   				x: piece.position.x + relX,
+   				y: piece.position.y + relY
+   			};
 
-         const distance = distanceVec2(draggedPort.worldPosition, worldPos);
-         if (distance <= snapRadius) {
-           if (!closest || distance < closest.distance) {
-             closest = { pieceId: piece.id, port, distance };
-           }
-         }
-       }
-     }
+   			const distance = distanceVec2(draggedPort.worldPosition, worldPos);
+   			if (distance <= snapRadius) {
+   				if (!closest || distance < closest.distance) {
+   					closest = { pieceId: piece.id, port, distance };
+   				}
+   			}
+   		}
+   	}
 
-     return closest;
+   	return closest;
    }
 
    /**
     * Create a bidirectional connection between two ports
     */
-   export function connectPorts(pieceA: PlacedPiece, portAId: string, pieceB: PlacedPiece, portBId: string): void {
-     pieceA.connections.set(portAId, `${pieceB.id}:${portBId}`);
-     pieceB.connections.set(portBId, `${pieceA.id}:${portAId}`);
+   export function connectPorts(
+   	pieceA: PlacedPiece,
+   	portAId: string,
+   	pieceB: PlacedPiece,
+   	portBId: string
+   ): void {
+   	pieceA.connections.set(portAId, `${pieceB.id}:${portBId}`);
+   	pieceB.connections.set(portBId, `${pieceA.id}:${portAId}`);
    }
 
    /**
     * Disconnect a port from its connected partner
     */
-   export function disconnectPort(piece: PlacedPiece, portId: string, allPieces: PlacedPiece[]): void {
-     const connectedId = piece.connections.get(portId);
-     if (!connectedId) return;
+   export function disconnectPort(
+   	piece: PlacedPiece,
+   	portId: string,
+   	allPieces: PlacedPiece[]
+   ): void {
+   	const connectedId = piece.connections.get(portId);
+   	if (!connectedId) return;
 
-     const [connectedPieceId, connectedPortId] = connectedId.split(":");
-     const connectedPiece = allPieces.find((p) => p.id === connectedPieceId);
+   	const [connectedPieceId, connectedPortId] = connectedId.split(':');
+   	const connectedPiece = allPieces.find((p) => p.id === connectedPieceId);
 
-     piece.connections.delete(portId);
-     if (connectedPiece) {
-       connectedPiece.connections.delete(connectedPortId);
-     }
+   	piece.connections.delete(portId);
+   	if (connectedPiece) {
+   		connectedPiece.connections.delete(connectedPortId);
+   	}
    }
 
    /**
     * Disconnect all ports of a piece
     */
    export function disconnectPiece(piece: PlacedPiece, allPieces: PlacedPiece[]): void {
-     const portIds = Array.from(piece.connections.keys());
-     portIds.forEach((portId) => disconnectPort(piece, portId, allPieces));
+   	const portIds = Array.from(piece.connections.keys());
+   	portIds.forEach((portId) => disconnectPort(piece, portId, allPieces));
    }
    ```
 
@@ -282,18 +291,18 @@ Wire canvas into main page.
 
    ```svelte
    <script>
-     import Canvas from '$lib/components/Canvas.svelte';
+   	import Canvas from '$lib/components/Canvas.svelte';
    </script>
 
    <main>
-     <h1>TrackPlanner</h1>
-     <Canvas />
+   	<h1>TrackPlanner</h1>
+   	<Canvas />
    </main>
 
    <style>
-     main {
-       padding: 1rem;
-     }
+   	main {
+   		padding: 1rem;
+   	}
    </style>
    ```
 

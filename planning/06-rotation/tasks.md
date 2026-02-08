@@ -10,16 +10,16 @@ Listen for R key during drag to increment pre-rotation.
 
    ```ts
    let handleKeyDown = (e: KeyboardEvent) => {
-     if (e.key.toLowerCase() === "r" && dragStore.isActive) {
-       e.preventDefault();
-       dragStore.rotatePreview(1); // +45°
-     }
+   	if (e.key.toLowerCase() === 'r' && dragStore.isActive) {
+   		e.preventDefault();
+   		dragStore.rotatePreview(1); // +45°
+   	}
    };
 
-   window.addEventListener("keydown", handleKeyDown);
+   window.addEventListener('keydown', handleKeyDown);
 
    onDestroy(() => {
-     window.removeEventListener("keydown", handleKeyDown);
+   	window.removeEventListener('keydown', handleKeyDown);
    });
    ```
 
