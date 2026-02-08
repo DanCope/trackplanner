@@ -2,6 +2,25 @@
 	import Canvas from '$lib/components/Canvas.svelte';
 	import DragPreview from '$lib/components/DragPreview.svelte';
 	import PiecePanel from '$lib/components/PiecePanel.svelte';
+	import { dragStore } from '$lib/stores/drag.svelte';
+	import { onMount } from 'svelte';
+
+	function handleKeyDown(e: KeyboardEvent): void {
+		const isRotateKey = e.code === 'KeyR' || e.key.toLowerCase() === 'r';
+		if (isRotateKey && dragStore.isActive) {
+			e.preventDefault();
+			e.stopPropagation();
+			dragStore.rotatePreview(1); // +45°
+		}
+	}
+
+	onMount(() => {
+		document.addEventListener('keydown', handleKeyDown, { capture: true });
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown, { capture: true });
+		};
+	});
 </script>
 
 <main class="flex h-screen flex-col">

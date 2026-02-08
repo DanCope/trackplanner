@@ -85,15 +85,15 @@ Use this to track progress across all features.
 
 ---
 
-## Feature 6: Piece Rotation (Pre-Placement) ☐
+## Feature 6: Piece Rotation (Pre-Placement) ✅
 
-- [ ] 6.1: Add Rotation Keyboard Handler
-- [ ] 6.2: Update Snap Calculation
-- [ ] 6.3: Update DragPreview
-- [ ] 6.4: Document Rotation in UI
-- [ ] 6.5: Test All Rotation Combinations
+- [x] 6.1: Add Rotation Keyboard Handler
+- [x] 6.2: Update Snap Calculation
+- [x] 6.3: Update DragPreview
+- [x] 6.4: Document Rotation in UI
+- [x] 6.5: Test All Rotation Combinations
 
-**Status:** ⏳ Ready to start (dependencies met)
+**Status:** ✅ Complete
 
 ---
 
@@ -112,11 +112,11 @@ Use this to track progress across all features.
 
 ## Overall Progress
 
-**Completed:** 5 / 7 features  
+**Completed:** 6 / 7 features  
 **In Progress:** 0 features  
 **Blocked:** 0 features
 
-**Next Step:** Begin Feature 6 (Piece Rotation) or Feature 7 (Selection & Deletion)
+**Next Step:** Begin Feature 7 (Selection & Deletion)
 
 ---
 
