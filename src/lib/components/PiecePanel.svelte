@@ -76,8 +76,8 @@
 	<div class="mt-auto rounded border border-blue-200 bg-blue-50 p-3 text-xs text-gray-700">
 		<p class="font-semibold text-blue-800">Tip:</p>
 		<p>
-			Press <kbd class="rounded bg-white px-1.5 py-0.5 font-mono shadow-sm">R</kbd> while dragging to
-			rotate
+			Press <kbd class="rounded bg-white px-1.5 py-0.5 font-mono shadow-sm">R</kbd> to rotate,
+			<kbd class="rounded bg-white px-1.5 py-0.5 font-mono shadow-sm">F</kbd> to flip
 		</p>
 	</div>
 </div>

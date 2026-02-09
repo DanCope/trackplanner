@@ -6,11 +6,19 @@
 	import { onMount } from 'svelte';
 
 	function handleKeyDown(e: KeyboardEvent): void {
+		if (!dragStore.isActive) return;
+
 		const isRotateKey = e.code === 'KeyR' || e.key.toLowerCase() === 'r';
-		if (isRotateKey && dragStore.isActive) {
+		const isFlipKey = e.code === 'KeyF' || e.key.toLowerCase() === 'f';
+
+		if (isRotateKey) {
 			e.preventDefault();
 			e.stopPropagation();
 			dragStore.rotatePreview(1); // +45°
+		} else if (isFlipKey) {
+			e.preventDefault();
+			e.stopPropagation();
+			dragStore.cyclePort(); // Cycle to next port
 		}
 	}
 

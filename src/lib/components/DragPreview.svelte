@@ -1,7 +1,11 @@
 <script lang="ts">
+	import { PLARAIL_CONFIG } from '$lib/config';
 	import { dragStore } from '$lib/stores/drag.svelte';
 	import type { PlacedPiece } from '$lib/types';
+	import { rotateVec2 } from '$lib/utils/geometry';
 	import TrackPiece from './TrackPiece.svelte';
+
+	const scale = PLARAIL_CONFIG.mmToPixels;
 
 	let canvasRect = $state<DOMRect | null>(null);
 	let canvasSize = $state<{ width: number; height: number } | null>(null);
@@ -22,6 +26,19 @@
 	}
 
 	const previewPiece = $derived(getDragPreviewPiece());
+
+	// Get selected port world position for highlight
+	const selectedPortWorldPos = $derived.by(() => {
+		if (!previewPiece || dragStore.selectedPortIndex === null) return null;
+		const port = previewPiece.definition.ports[dragStore.selectedPortIndex];
+		if (!port) return null;
+
+		const rotatedPortPos = rotateVec2(port.position, { x: 0, y: 0 }, previewPiece.rotation);
+		return {
+			x: (previewPiece.position.x + rotatedPortPos.x) * scale,
+			y: (previewPiece.position.y + rotatedPortPos.y) * scale
+		};
+	});
 
 	$effect(() => {
 		if (!dragStore.isActive) {
@@ -52,5 +69,21 @@
 		<g opacity="0.6">
 			<TrackPiece piece={previewPiece} isSelected={false} onSelect={() => {}} />
 		</g>
+
+		<!-- Highlight selected port with blue pulsing circle -->
+		{#if selectedPortWorldPos}
+			<circle
+				cx={selectedPortWorldPos.x}
+				cy={selectedPortWorldPos.y}
+				r="8"
+				fill="none"
+				stroke="#3b82f6"
+				stroke-width="2"
+				opacity="0.8"
+			>
+				<animate attributeName="r" values="6;10;6" dur="1.5s" repeatCount="indefinite" />
+				<animate attributeName="opacity" values="0.8;0.4;0.8" dur="1.5s" repeatCount="indefinite" />
+			</circle>
+		{/if}
 	</svg>
 {/if}

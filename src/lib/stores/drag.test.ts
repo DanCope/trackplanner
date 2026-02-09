@@ -91,3 +91,63 @@ describe('DragStore rotation', () => {
 		expect(store.preRotation).toBe(0);
 	});
 });
+
+describe('DragStore port cycling', () => {
+	let store: DragStore;
+
+	beforeEach(() => {
+		store = new DragStore();
+	});
+
+	test('initializes selectedPortIndex to null', () => {
+		expect(store.selectedPortIndex).toBe(null);
+	});
+
+	test('startDrag initializes to 0, cyclePort moves to 1', () => {
+		store.startDrag(shortStraight);
+		expect(store.selectedPortIndex).toBe(0);
+		store.cyclePort();
+		expect(store.selectedPortIndex).toBe(1);
+	});
+
+	test('cyclePort cycles through all ports', () => {
+		store.startDrag(shortStraight); // 2 ports, starts at 0
+		expect(store.selectedPortIndex).toBe(0);
+		store.cyclePort(); // -> 1
+		expect(store.selectedPortIndex).toBe(1);
+		store.cyclePort(); // -> 0 (wrap)
+		expect(store.selectedPortIndex).toBe(0);
+	});
+
+	test('cyclePort works with curve pieces', () => {
+		store.startDrag(curve45); // 2 ports, starts at 0
+		expect(store.selectedPortIndex).toBe(0);
+		store.cyclePort();
+		expect(store.selectedPortIndex).toBe(1);
+		store.cyclePort();
+		expect(store.selectedPortIndex).toBe(0); // wraps
+	});
+
+	test('cyclePort does nothing when not dragging', () => {
+		store.cyclePort();
+		expect(store.selectedPortIndex).toBe(null);
+	});
+
+	test('selectedPortIndex resets on startDrag', () => {
+		store.startDrag(shortStraight);
+		store.cyclePort();
+		expect(store.selectedPortIndex).toBe(1);
+
+		// Start new drag - should reset to 0
+		store.startDrag(curve45);
+		expect(store.selectedPortIndex).toBe(0);
+	});
+
+	test('selectedPortIndex resets on endDrag', () => {
+		store.startDrag(shortStraight);
+		store.cyclePort();
+		expect(store.selectedPortIndex).toBe(1);
+		store.endDrag();
+		expect(store.selectedPortIndex).toBe(null);
+	});
+});

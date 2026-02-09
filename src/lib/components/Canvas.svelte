@@ -137,9 +137,14 @@
 					continue;
 				}
 
-				// Check all dragged ports and choose the snap that lands closest to the cursor
+				// Check dragged ports: if user selected a specific port, only check that one
 				const draggedPorts = dragStore.activePieceDefinition.ports;
-				for (const draggedPort of draggedPorts) {
+				const portsToCheck =
+					dragStore.selectedPortIndex !== null
+						? [draggedPorts[dragStore.selectedPortIndex]]
+						: draggedPorts;
+
+				for (const draggedPort of portsToCheck) {
 					try {
 						const snapResult = computeSnapTransform(
 							dragStore.activePieceDefinition,
