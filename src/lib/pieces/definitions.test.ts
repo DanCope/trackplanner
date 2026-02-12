@@ -1,7 +1,7 @@
 import { PLARAIL_CONFIG } from '$lib/config';
 import { distanceVec2, oppositeDirection } from '$lib/utils/geometry';
 import { describe, expect, it } from 'vitest';
-import { curve45, shortStraight } from './definitions';
+import { curve45, longStraight, shortStraight } from './definitions';
 
 describe('Piece Definitions', () => {
 	describe('Short Straight', () => {
@@ -24,6 +24,43 @@ describe('Piece Definitions', () => {
 			expect(shortStraight.svgPath).toMatch(/^M/);
 			expect(shortStraight.svgPath).toContain('L');
 			expect(shortStraight.svgPath).toContain('Z');
+		});
+	});
+
+	describe('Long Straight', () => {
+		it('has two ports', () => {
+			expect(longStraight.ports).toHaveLength(2);
+		});
+
+		it('ports are symmetric', () => {
+			const [portA, portB] = longStraight.ports;
+			expect(portA.position.y).toBeCloseTo(-portB.position.y);
+			expect(portA.position.x).toBeCloseTo(portB.position.x);
+		});
+
+		it('port directions are opposite', () => {
+			const [portA, portB] = longStraight.ports;
+			expect(portB.direction).toBe(oppositeDirection(portA.direction));
+		});
+
+		it('has valid SVG path', () => {
+			expect(longStraight.svgPath).toMatch(/^M/);
+			expect(longStraight.svgPath).toContain('L');
+			expect(longStraight.svgPath).toContain('Z');
+		});
+
+		it('is exactly double the length of short straight', () => {
+			const [shortA, shortB] = shortStraight.ports;
+			const [longA, longB] = longStraight.ports;
+			const shortLength = distanceVec2(shortA.position, shortB.position);
+			const longLength = distanceVec2(longA.position, longB.position);
+			expect(longLength).toBeCloseTo(shortLength * 2, 1);
+		});
+
+		it('ports are at ±54mm from origin', () => {
+			const [portA, portB] = longStraight.ports;
+			expect(Math.abs(portA.position.y)).toBeCloseTo(54, 1);
+			expect(Math.abs(portB.position.y)).toBeCloseTo(54, 1);
 		});
 	});
 

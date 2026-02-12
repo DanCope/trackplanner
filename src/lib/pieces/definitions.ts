@@ -27,6 +27,30 @@ export const shortStraight: PieceDefinition = {
 	} ${halfLength} L ${-width / 2} ${halfLength} Z`
 };
 
+const longLength = straightLength * 2; // 108 mm
+const longHalfLength = longLength / 2; // 54 mm
+
+export const longStraight: PieceDefinition = {
+	type: 'straight',
+	ports: [
+		{
+			id: 'A',
+			position: { x: 0, y: -longHalfLength },
+			direction: 'S'
+		},
+		{
+			id: 'B',
+			position: { x: 0, y: longHalfLength },
+			direction: 'N'
+		}
+	],
+	// SVG path: rectangle centered at origin
+	// Width = 10 mm, Height = longLength mm (double the short straight)
+	svgPath: `M ${-width / 2} ${-longHalfLength} L ${width / 2} ${-longHalfLength} L ${
+		width / 2
+	} ${longHalfLength} L ${-width / 2} ${longHalfLength} Z`
+};
+
 const curveRadius = PLARAIL_CONFIG.curveRadius; // 143 mm
 const curveAngle = PLARAIL_CONFIG.curveAngle; // 45 degrees
 const curveHalfWidth = width / 2;
