@@ -20,7 +20,7 @@ export const PLARAIL_CONFIG = {
 	curveRadius: 143, // mm (center to center of rails)
 
 	// SVG pixel scale (mm → px)
-	mmToPixels: 2, // 1 mm = 2 pixels in SVG rendering
+	mmToPixels: 1, // 1 mm = 1 pixel in SVG rendering (halved for more canvas space)
 
 	// Snap tolerance for detecting close ports
 	snapRadius: 10 // mm (distance threshold to snap)

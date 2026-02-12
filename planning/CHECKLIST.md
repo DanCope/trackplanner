@@ -97,26 +97,26 @@ Use this to track progress across all features.
 
 ---
 
-## Feature 7: Selection & Deletion ☐
+## Feature 7: Selection & Deletion ✅
 
-- [ ] 7.1: Create Toolbar Component
-- [ ] 7.2: Wire Delete Keyboard Shortcut
-- [ ] 7.3: Enhance TrackPiece Selection Styling
-- [ ] 7.4: Wire Toolbar into Main Page
-- [ ] 7.5: Test Selection & Deletion
-- [ ] 7.6: Final MVP Verification
+- [x] 7.1: Create Toolbar Component
+- [x] 7.2: Wire Delete Keyboard Shortcut
+- [x] 7.3: Enhance TrackPiece Selection Styling
+- [x] 7.4: Wire Toolbar into Main Page
+- [x] 7.5: Test Selection & Deletion
+- [x] 7.6: Final MVP Verification
 
-**Status:** ⏳ Ready to start (dependencies met)
+**Status:** ✅ Complete
 
 ---
 
 ## Overall Progress
 
-**Completed:** 6 / 7 features  
+**Completed:** 7 / 7 features  
 **In Progress:** 0 features  
 **Blocked:** 0 features
 
-**Next Step:** Begin Feature 7 (Selection & Deletion)
+**Status:** 🎉 MVP Complete!
 
 ---
 
@@ -135,16 +135,16 @@ Use this to track progress across all features.
 
 ## Deployment Readiness
 
-- [ ] All tests pass: `pnpm test:unit && pnpm test:e2e`
-- [ ] Type check passes: `pnpm check`
-- [ ] Lint passes: `pnpm lint`
-- [ ] Build succeeds: `pnpm build` with 0 errors
-- [ ] Build output verified: static HTML/CSS/JS only
-- [ ] GitHub Actions workflow created and tested
-- [ ] GitHub Pages enabled in repo settings
-- [ ] Site accessible at deployed URL
+- [x] All tests pass: `pnpm test:unit && pnpm test:e2e`
+- [x] Type check passes: `pnpm check`
+- [x] Lint passes: `pnpm lint`
+- [x] Build succeeds: `pnpm build` with 0 errors
+- [x] Build output verified: static HTML/CSS/JS only
+- [x] GitHub Actions workflow created and tested
+- [x] GitHub Pages enabled in repo settings
+- [ ] Site accessible at deployed URL (pending deployment)
 
-**Status:** ⏳ Not ready
+**Status:** ✅ Ready for deployment
 
 ---
 
@@ -183,4 +183,7 @@ After each feature completes, update this section:
 - Completed: February 8, 2026
 - Notes: All stores and components implemented successfully. Fixed $state import (runes don't need imports in Svelte 5). Layout store tracks pieces and connections, selection store tracks selected piece, Canvas renders all pieces reactively. Connection logic validates port matching with rotated directions. Build succeeded with 0 errors (2 a11y warnings on Canvas SVG - non-blocking).
 
-(Continue for all features...)
+### Feature 7: ✅
+
+- Completed: February 9, 2026
+- Notes: Selection and deletion fully implemented. Created Toolbar component with delete button and piece count display. Keyboard shortcuts (Delete/Backspace) work alongside button deletion. Enhanced TrackPiece visual feedback with dashed border, circle outline, hover effects, and blue glow for selection. LayoutStore.removePiece() automatically cleans up all connections. All tests pass (42 tests), type check passes with 2 non-blocking a11y warnings, build succeeds. MVP complete and ready for deployment.

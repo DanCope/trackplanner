@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { PlacedPiece } from '$lib/types';
 	import { PLARAIL_CONFIG } from '$lib/config';
+	import type { PlacedPiece } from '$lib/types';
 	import PortIndicator from './PortIndicator.svelte';
 
 	interface Props {
@@ -15,11 +15,16 @@
 	const transform = $derived(
 		`translate(${piece.position.x * scale}, ${piece.position.y * scale}) rotate(${piece.rotation})`
 	);
+
+	// Pastel colors for different piece types
+	const fillColor = $derived(
+		piece.definition.type === 'straight' ? '#bfdbfe' : '#fecdd3' // blue-200 : rose-200
+	);
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<g {transform} onclick={onSelect} class:selected={isSelected}>
+<g {transform} onclick={onSelect} class:selected={isSelected} pointer-events="bounding-box">
 	<!-- Piece SVG path (thicker stroke for visibility) -->
 	<path
 		d={piece.definition.svgPath}
@@ -27,7 +32,7 @@
 		stroke-width="2"
 		transform={`scale(${scale})`}
 		vector-effect="non-scaling-stroke"
-		fill="none"
+		fill={fillColor}
 		stroke-linecap="round"
 	/>
 
@@ -41,12 +46,31 @@
 
 	<!-- Selection highlight -->
 	{#if isSelected}
-		<rect x="-30" y="-30" width="60" height="60" stroke="blue" stroke-width="2" fill="none" />
+		<rect
+			x="-30"
+			y="-30"
+			width="60"
+			height="60"
+			stroke="#3b82f6"
+			stroke-width="2"
+			fill="none"
+			stroke-dasharray="5,5"
+		/>
+		<circle cx="0" cy="0" r="35" stroke="#3b82f6" stroke-width="1" fill="none" opacity="0.5" />
 	{/if}
 </g>
 
 <style>
+	g {
+		cursor: pointer;
+		transition: filter 150ms ease;
+	}
+
+	g:hover {
+		filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+	}
+
 	g.selected {
-		filter: drop-shadow(0 0 4px blue);
+		filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.8));
 	}
 </style>

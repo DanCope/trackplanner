@@ -15,9 +15,21 @@
 	const SNAP_DISTANCE = PLARAIL_CONFIG.snapRadius;
 
 	let nextPieceId = $state(1);
+	let availablePorts = $state<Set<string>>(new Set());
 
 	const handleCanvasClick = (event: MouseEvent): void => {
 		if (event.target === event.currentTarget) {
+			selectionStore.deselect();
+		}
+	};
+
+	const handleCanvasKeydown = (event: KeyboardEvent): void => {
+		if (event.key === 'Delete' || event.key === 'Backspace') {
+			if (selectionStore.selectedPieceId) {
+				layoutStore.removePiece(selectionStore.selectedPieceId);
+				selectionStore.deselect();
+			}
+		} else if (event.key === 'Escape') {
 			selectionStore.deselect();
 		}
 	};
@@ -100,6 +112,7 @@
 	// Monitor drag state and compute snap targets
 	$effect(() => {
 		if (!dragStore.isActive || !dragStore.activePieceDefinition) {
+			availablePorts = new Set();
 			return;
 		}
 
@@ -108,6 +121,7 @@
 		let bestDraggedPortId: string | null = null;
 		let bestSnapResult: { position: { x: number; y: number }; rotation: number } | null = null;
 		let bestOriginDistance = Number.POSITIVE_INFINITY;
+		const newAvailablePorts = new Set<string>();
 
 		// Check all pieces for open ports within snap distance
 		for (const targetPiece of layoutStore.pieces) {
@@ -136,6 +150,10 @@
 				if (distance > SNAP_DISTANCE) {
 					continue;
 				}
+				//Mark this port as available
+				newAvailablePorts.add(`${targetPiece.id}:${targetPort.id}`);
+
+				//
 
 				// Check dragged ports: if user selected a specific port, only check that one
 				const draggedPorts = dragStore.activePieceDefinition.ports;
@@ -186,6 +204,8 @@
 		} else {
 			dragStore.setSnapTarget(null, null);
 		}
+
+		availablePorts = newAvailablePorts;
 	});
 
 	// Render port indicators for all pieces
@@ -217,13 +237,19 @@
 	const allPorts = $derived(getAllPorts());
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <svg
 	id="track-canvas"
 	{width}
 	{height}
 	viewBox={`0 0 ${width} ${height}`}
 	class="rounded border border-gray-300 bg-white"
+	role="img"
+	aria-label="Track layout canvas"
+	tabindex="0"
 	onclick={handleCanvasClick}
+	onkeydown={handleCanvasKeydown}
 	onmouseup={handleCanvasMouseUp}
 >
 	{#each layoutStore.pieces as piece (piece.id)}
@@ -239,8 +265,7 @@
 		<PortIndicator
 			position={{ x: portInfo.worldPos.x * scale, y: portInfo.worldPos.y * scale }}
 			isConnected={portInfo.isConnected}
-			isAvailable={dragStore.snapTarget?.pieceId === portInfo.piece.id &&
-				dragStore.snapTarget?.portId === portInfo.portId}
+			isAvailable={availablePorts.has(`${portInfo.piece.id}:${portInfo.portId}`)}
 		/>
 	{/each}
 </svg>
