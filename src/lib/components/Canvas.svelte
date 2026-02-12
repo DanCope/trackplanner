@@ -6,6 +6,7 @@
 	import { layoutStore } from '$lib/stores/layout.svelte';
 	import { selectionStore } from '$lib/stores/selection.svelte';
 	import type { PlacedPiece } from '$lib/types';
+	import { connectPorts, findCoincidentConnections } from '$lib/utils/connections';
 	import { rotateVec2 } from '$lib/utils/geometry';
 	import { computeSnapTransform } from '$lib/utils/snap';
 
@@ -104,6 +105,15 @@
 
 		layoutStore.addPiece(newPiece);
 		nextPieceId++;
+
+		// Find and connect any coincident ports (loop closure)
+		const coincidentMatches = findCoincidentConnections(newPiece, layoutStore.pieces, 0.5);
+		for (const match of coincidentMatches) {
+			const existingPiece = layoutStore.pieces.find((p) => p.id === match.existingPieceId);
+			if (existingPiece) {
+				connectPorts(newPiece, match.newPiecePortId, existingPiece, match.existingPortId);
+			}
+		}
 
 		// End drag
 		dragStore.endDrag();

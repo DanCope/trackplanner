@@ -74,3 +74,72 @@ export function disconnectPiece(piece: PlacedPiece, allPieces: PlacedPiece[]): v
 	const portIds = Array.from(piece.connections.keys());
 	portIds.forEach((portId) => disconnectPort(piece, portId, allPieces));
 }
+
+export interface CoincidentConnection {
+	newPiecePortId: string;
+	existingPieceId: string;
+	existingPortId: string;
+}
+
+/**
+ * Find all unconnected ports on the newly placed piece that coincide
+ * with unconnected ports on existing pieces (for loop closure)
+ * @param newPiece The newly placed piece
+ * @param allPieces All pieces in the layout (including newPiece)
+ * @param tolerance Distance tolerance for coincidence (mm)
+ * @returns Array of coincident port pairs
+ */
+export function findCoincidentConnections(
+	newPiece: PlacedPiece,
+	allPieces: PlacedPiece[],
+	tolerance: number = 0.5
+): CoincidentConnection[] {
+	const matches: CoincidentConnection[] = [];
+	const rotationStepsNew = Math.round(newPiece.rotation / 45);
+
+	// For each unconnected port on the new piece
+	for (const newPort of newPiece.definition.ports) {
+		if (newPiece.connections.has(newPort.id)) continue;
+
+		const newWorldDirection = rotateDirection(newPort.direction, rotationStepsNew);
+		const newWorldPosition = addVec2(
+			newPiece.position,
+			rotateVec2Simple(newPort.position, newPiece.rotation)
+		);
+
+		// Check against all other pieces
+		for (const existingPiece of allPieces) {
+			if (existingPiece.id === newPiece.id) continue;
+
+			const rotationStepsExisting = Math.round(existingPiece.rotation / 45);
+
+			for (const existingPort of existingPiece.definition.ports) {
+				if (existingPiece.connections.has(existingPort.id)) continue;
+
+				const existingWorldDirection = rotateDirection(
+					existingPort.direction,
+					rotationStepsExisting
+				);
+				const existingWorldPosition = addVec2(
+					existingPiece.position,
+					rotateVec2Simple(existingPort.position, existingPiece.rotation)
+				);
+
+				// Check if ports coincide: close enough AND opposite directions
+				const distance = distanceVec2(newWorldPosition, existingWorldPosition);
+				if (
+					distance <= tolerance &&
+					existingWorldDirection === oppositeDirection(newWorldDirection)
+				) {
+					matches.push({
+						newPiecePortId: newPort.id,
+						existingPieceId: existingPiece.id,
+						existingPortId: existingPort.id
+					});
+				}
+			}
+		}
+	}
+
+	return matches;
+}
