@@ -98,3 +98,44 @@ export const curve45: PieceDefinition = {
 	// Flip sweep flags to curve in the opposite direction
 	svgPath: `M ${outerStartX} ${outerStartY} A ${outerRadius} ${outerRadius} 0 0 0 ${outerEndX} ${outerEndY} L ${innerEndX} ${innerEndY} A ${innerRadius} ${innerRadius} 0 0 1 ${innerStartX} ${innerStartY} Z`
 };
+
+// Turnout (Y-split) geometry:
+// - Entry at split point (origin), two exits (straight + branch)
+// - Branch matches curve45 geometry so it aligns with standard curves
+// - Straight exit is a long straight (108mm) from the split point
+const turnoutBranchX = curveRadius - curveRadius * Math.cos(curveAngleRad);
+const turnoutBranchY = curveRadius * Math.sin(curveAngleRad);
+const straightToArcY = Math.sqrt(outerRadius * outerRadius - (curveRadius - width / 2) ** 2);
+
+export const turnout: PieceDefinition = {
+	type: 'turnout',
+	ports: [
+		{
+			id: 'A',
+			position: { x: 0, y: 0 }, // Entry at split point
+			direction: 'S'
+		},
+		{
+			id: 'B',
+			position: { x: 0, y: longLength }, // Straight exit at top
+			direction: 'N'
+		},
+		{
+			id: 'C',
+			position: { x: turnoutBranchX, y: turnoutBranchY }, // Branch exit
+			direction: 'NW' // Exits at 45° angle
+		}
+	],
+	// SVG: single continuous path forming a Y-shape
+	svgPath: (() => {
+		return `
+			M ${outerStartX} ${outerStartY} 
+			L ${-width / 2} ${longLength}
+			L ${width / 2} ${longLength}
+			L ${width / 2} ${straightToArcY}
+			A ${innerRadius} ${innerRadius} 0 0 0 ${outerEndX} ${outerEndY}
+			L ${innerEndX} ${innerEndY}  
+			A ${outerRadius} ${outerRadius} 0 0 1 ${width / 2} ${outerStartY}
+			Z`;
+	})()
+};

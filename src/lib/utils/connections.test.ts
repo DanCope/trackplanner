@@ -1,4 +1,4 @@
-import { shortStraight } from '$lib/pieces';
+import { curve45, shortStraight, turnout } from '$lib/pieces';
 import type { PlacedPiece } from '$lib/types';
 import { describe, expect, it } from 'vitest';
 import {
@@ -9,6 +9,7 @@ import {
 	findSnapTarget
 } from './connections';
 import { addVec2, oppositeDirection, rotateVec2Simple } from './geometry';
+import { computeSnapTransform } from './snap';
 
 const createPiece = (id: string, position = { x: 0, y: 0 }, rotation = 0): PlacedPiece => ({
 	id,
@@ -176,5 +177,87 @@ describe('findCoincidentConnections', () => {
 		expect(matches).toHaveLength(1);
 		expect(matches[0].newPiecePortId).toBe('A');
 		expect(matches[0].existingPortId).toBe('B');
+	});
+});
+
+describe('loop closure with curves', () => {
+	const placeSnappedPiece = (
+		id: string,
+		definition: PlacedPiece['definition'],
+		draggedPortId: string,
+		targetPiece: PlacedPiece,
+		targetPortId: string
+	): PlacedPiece => {
+		const snap = computeSnapTransform(definition, draggedPortId, targetPiece, targetPortId, 0);
+		return {
+			id,
+			definition,
+			position: snap.position,
+			rotation: snap.rotation,
+			connections: new Map()
+		};
+	};
+
+	it('closes a loop with 8 curves', () => {
+		const pieces: PlacedPiece[] = [];
+
+		const first: PlacedPiece = {
+			id: 'curve-0',
+			definition: curve45,
+			position: { x: 0, y: 0 },
+			rotation: 0,
+			connections: new Map()
+		};
+		pieces.push(first);
+
+		let prev = first;
+		let prevExitPortId = 'B';
+
+		for (let i = 1; i < 8; i += 1) {
+			const next = placeSnappedPiece(`curve-${i}`, curve45, 'A', prev, prevExitPortId);
+			pieces.push(next);
+			prev = next;
+			prevExitPortId = 'B';
+		}
+
+		const matches = findCoincidentConnections(prev, pieces, 0.5);
+		const closesLoop = matches.some(
+			(match) => match.newPiecePortId === 'B' && match.existingPieceId === 'curve-0'
+		);
+		expect(closesLoop).toBe(true);
+	});
+
+	it('closes a loop when one curve is a turnout branch', () => {
+		const pieces: PlacedPiece[] = [];
+
+		const first: PlacedPiece = {
+			id: 'curve-0',
+			definition: curve45,
+			position: { x: 0, y: 0 },
+			rotation: 0,
+			connections: new Map()
+		};
+		pieces.push(first);
+
+		let prev = first;
+		let prevExitPortId = 'B';
+
+		for (let i = 1; i < 8; i += 1) {
+			const isTurnout = i === 4;
+			const definition = isTurnout ? turnout : curve45;
+			const entryPortId = 'A';
+			const exitPortId = isTurnout ? 'C' : 'B';
+
+			const next = placeSnappedPiece(`piece-${i}`, definition, entryPortId, prev, prevExitPortId);
+			pieces.push(next);
+			prev = next;
+			prevExitPortId = exitPortId;
+		}
+
+		const matches = findCoincidentConnections(prev, pieces, 0.5);
+		const closesLoop = matches.some(
+			(match) => match.newPiecePortId === prevExitPortId && match.existingPieceId === 'curve-0'
+		);
+		expect(closesLoop).toBe(true);
 	});
 });

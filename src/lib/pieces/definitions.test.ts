@@ -1,7 +1,7 @@
 import { PLARAIL_CONFIG } from '$lib/config';
 import { distanceVec2, oppositeDirection } from '$lib/utils/geometry';
 import { describe, expect, it } from 'vitest';
-import { curve45, longStraight, shortStraight } from './definitions';
+import { curve45, longStraight, shortStraight, turnout } from './definitions';
 
 describe('Piece Definitions', () => {
 	describe('Short Straight', () => {
@@ -97,6 +97,81 @@ describe('Piece Definitions', () => {
 		it('has valid SVG arc path', () => {
 			expect(curve45.svgPath).toMatch(/^M/);
 			expect(curve45.svgPath).toContain('A');
+		});
+	});
+
+	describe('Turnout', () => {
+		it('has three ports', () => {
+			expect(turnout.ports).toHaveLength(3);
+		});
+
+		it('has unique port IDs', () => {
+			const portIds = turnout.ports.map((p) => p.id);
+			const uniqueIds = new Set(portIds);
+			expect(uniqueIds.size).toBe(3);
+			expect(portIds).toContain('A');
+			expect(portIds).toContain('B');
+			expect(portIds).toContain('C');
+		});
+
+		it('entry port is at origin', () => {
+			const entryPort = turnout.ports.find((p) => p.id === 'A');
+			expect(entryPort).toBeDefined();
+			if (entryPort) {
+				expect(entryPort.position.x).toBeCloseTo(0);
+				expect(entryPort.position.y).toBeCloseTo(0);
+				expect(entryPort.direction).toBe('S');
+			}
+		});
+
+		it('straight exit is at top center facing opposite of entry', () => {
+			const expectedLongLength = PLARAIL_CONFIG.straightLength * 2;
+			const straightExit = turnout.ports.find((p) => p.id === 'B');
+			const entry = turnout.ports.find((p) => p.id === 'A');
+			expect(straightExit).toBeDefined();
+			expect(entry).toBeDefined();
+			if (straightExit && entry) {
+				expect(straightExit.position.x).toBeCloseTo(0);
+				expect(straightExit.position.y).toBeCloseTo(expectedLongLength, 1);
+				expect(straightExit.direction).toBe('N');
+				expect(straightExit.direction).toBe(oppositeDirection(entry.direction));
+			}
+		});
+
+		it('branch exit is at 45-degree angle', () => {
+			const expectedBranchX =
+				PLARAIL_CONFIG.curveRadius -
+				PLARAIL_CONFIG.curveRadius * Math.cos((PLARAIL_CONFIG.curveAngle * Math.PI) / 180);
+			const expectedBranchY =
+				PLARAIL_CONFIG.curveRadius * Math.sin((PLARAIL_CONFIG.curveAngle * Math.PI) / 180);
+			const branchExit = turnout.ports.find((p) => p.id === 'C');
+			expect(branchExit).toBeDefined();
+			if (branchExit) {
+				expect(branchExit.position.x).toBeCloseTo(expectedBranchX, 1);
+				expect(branchExit.position.y).toBeCloseTo(expectedBranchY, 1);
+				expect(branchExit.direction).toBe('NW'); // 45° from straight
+			}
+		});
+
+		it('has valid composite SVG path', () => {
+			expect(turnout.svgPath).toMatch(/^M/); // Starts with move
+			expect(turnout.svgPath).toContain('L'); // Contains lines
+			expect(turnout.svgPath).toContain('A'); // Contains arcs
+			expect(turnout.svgPath).toContain('Z'); // Closes paths
+		});
+
+		it('straight and branch exits are roughly same distance from entry', () => {
+			const entry = turnout.ports.find((p) => p.id === 'A')!;
+			const straightExit = turnout.ports.find((p) => p.id === 'B')!;
+			const branchExit = turnout.ports.find((p) => p.id === 'C')!;
+
+			const straightDist = distanceVec2(entry.position, straightExit.position);
+			const branchDist = distanceVec2(entry.position, branchExit.position);
+
+			// Should be close to 108mm (long straight length)
+			expect(straightDist).toBeCloseTo(PLARAIL_CONFIG.straightLength * 2, 1);
+			// Branch should be similar length (within 10mm)
+			expect(Math.abs(branchDist - straightDist)).toBeLessThan(10);
 		});
 	});
 });

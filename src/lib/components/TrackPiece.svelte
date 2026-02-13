@@ -17,9 +17,16 @@
 	);
 
 	// Pastel colors for different piece types
-	const fillColor = $derived(
-		piece.definition.type === 'straight' ? '#bfdbfe' : '#fecdd3' // blue-200 : rose-200
-	);
+	const fillColor = $derived.by(() => {
+		switch (piece.definition.type) {
+			case 'straight':
+				return '#bfdbfe'; // blue-200
+			case 'turnout':
+				return '#bbf7d0'; // green-200
+			default:
+				return '#fecdd3'; // rose-200
+		}
+	});
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
