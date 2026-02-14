@@ -155,7 +155,7 @@
 	};
 
 	const getWorldPositionFromEvent = (event: MouseEvent): { x: number; y: number } | null => {
-		const svg = event.currentTarget as SVGSVGElement | null;
+		const svg = svgElement ?? (event.currentTarget as SVGSVGElement | null);
 		if (!svg) {
 			return null;
 		}
@@ -302,6 +302,8 @@
 	}
 
 	const allPorts = $derived(getAllPorts());
+
+
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->

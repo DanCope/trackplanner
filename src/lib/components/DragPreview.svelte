@@ -67,7 +67,7 @@
 		{viewBox}
 	>
 		<g opacity="0.6">
-			<TrackPiece piece={previewPiece} isSelected={false} onSelect={() => {}} />
+			<TrackPiece piece={previewPiece} isSelected={false} onSelect={() => {}} interactive={false} />
 		</g>
 
 		<!-- Highlight selected port with blue pulsing circle -->

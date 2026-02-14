@@ -107,7 +107,7 @@ const turnoutBranchX = curveRadius - curveRadius * Math.cos(curveAngleRad);
 const turnoutBranchY = curveRadius * Math.sin(curveAngleRad);
 const straightToArcY = Math.sqrt(outerRadius * outerRadius - (curveRadius - width / 2) ** 2);
 
-export const turnout: PieceDefinition = {
+export const turnoutLeft: PieceDefinition = {
 	type: 'turnout',
 	ports: [
 		{
@@ -122,8 +122,8 @@ export const turnout: PieceDefinition = {
 		},
 		{
 			id: 'C',
-			position: { x: turnoutBranchX, y: turnoutBranchY }, // Branch exit
-			direction: 'NW' // Exits at 45° angle
+			position: { x: turnoutBranchX, y: turnoutBranchY }, // Branch exit (left/west)
+			direction: 'NW' // Exits at 45° angle to the left
 		}
 	],
 	// SVG: single continuous path forming a Y-shape
@@ -136,6 +136,39 @@ export const turnout: PieceDefinition = {
 			A ${innerRadius} ${innerRadius} 0 0 0 ${outerEndX} ${outerEndY}
 			L ${innerEndX} ${innerEndY}  
 			A ${outerRadius} ${outerRadius} 0 0 1 ${width / 2} ${outerStartY}
+			Z`.trim();
+	})()
+};
+
+export const turnoutRight: PieceDefinition = {
+	type: 'turnout',
+	ports: [
+		{
+			id: 'A',
+			position: { x: 0, y: 0 }, // Entry at split point
+			direction: 'S'
+		},
+		{
+			id: 'B',
+			position: { x: 0, y: longLength }, // Straight exit at top
+			direction: 'N'
+		},
+		{
+			id: 'C',
+			position: { x: -turnoutBranchX, y: turnoutBranchY }, // Branch exit (right/east)
+			direction: 'NE' // Exits at 45° angle to the right
+		}
+	],
+	// SVG: single continuous path forming a Y-shape (mirrored horizontally)
+	svgPath: (() => {
+		return `
+			M ${-outerStartX} ${outerStartY} 
+			L ${width / 2} ${longLength}
+			L ${-width / 2} ${longLength}
+			L ${-width / 2} ${straightToArcY}
+			A ${innerRadius} ${innerRadius} 0 0 1 ${-outerEndX} ${outerEndY}
+			L ${-innerEndX} ${innerEndY}  
+			A ${outerRadius} ${outerRadius} 0 0 0 ${-width / 2} ${outerStartY}
 			Z`.trim();
 	})()
 };

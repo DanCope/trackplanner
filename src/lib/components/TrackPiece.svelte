@@ -7,9 +7,10 @@
 		piece: PlacedPiece;
 		isSelected?: boolean;
 		onSelect?: () => void;
+		interactive?: boolean;
 	}
 
-	let { piece, isSelected = false, onSelect }: Props = $props();
+	let { piece, isSelected = false, onSelect, interactive = true }: Props = $props();
 
 	const scale = PLARAIL_CONFIG.mmToPixels;
 	const transform = $derived(
@@ -36,7 +37,7 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<g {transform} onclick={onSelect} class:selected={isSelected} pointer-events="bounding-box">
+<g {transform} onclick={onSelect} class:selected={isSelected} pointer-events={interactive ? 'bounding-box' : 'none'}>
 	<!-- Piece SVG path (thicker stroke for visibility) -->
 	<path
 		d={piece.definition.svgPath}

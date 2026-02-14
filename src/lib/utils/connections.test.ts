@@ -1,4 +1,4 @@
-import { curve45, shortStraight, turnout } from '$lib/pieces';
+import { curve45, shortStraight, turnoutLeft } from '$lib/pieces';
 import type { PlacedPiece } from '$lib/types';
 import { describe, expect, it } from 'vitest';
 import {
@@ -244,7 +244,7 @@ describe('loop closure with curves', () => {
 
 		for (let i = 1; i < 8; i += 1) {
 			const isTurnout = i === 4;
-			const definition = isTurnout ? turnout : curve45;
+			const definition = isTurnout ? turnoutLeft : curve45;
 			const entryPortId = 'A';
 			const exitPortId = isTurnout ? 'C' : 'B';
 
