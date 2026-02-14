@@ -179,16 +179,16 @@ Use this to track progress across all features.
 
 ## Feature 9: Canvas Viewport (Zoom & Pan)
 
-- [ ] 9.1: Create ViewportStore
-- [ ] 9.2: Unit Test ViewportStore
-- [ ] 9.3: Integrate ViewportStore into Canvas
-- [ ] 9.4: Add Scroll Wheel Zoom
-- [ ] 9.5: Add Pan via Mouse Drag
-- [ ] 9.6: Create ZoomControls Component
-- [ ] 9.7: Update DragPreview for Dynamic ViewBox
-- [ ] 9.8: Add Keyboard Shortcuts & Final Verification
+- [x] 9.1: Create ViewportStore
+- [x] 9.2: Unit Test ViewportStore
+- [x] 9.3: Integrate ViewportStore into Canvas
+- [x] 9.4: Add Scroll Wheel Zoom
+- [x] 9.5: Add Pan via Mouse Drag
+- [x] 9.6: Create ZoomControls Component
+- [x] 9.7: Update DragPreview for Dynamic ViewBox
+- [x] 9.8: Add Keyboard Shortcuts & Final Verification
 
-**Status:** ⏳ Not Started
+**Status:** ✅ Complete
 
 ---
 

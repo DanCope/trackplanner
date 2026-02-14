@@ -1,14 +1,16 @@
 <script lang="ts">
-	import { PLARAIL_CONFIG } from '$lib/config';
+	import { PLARAIL_CONFIG, VIEWPORT_CONFIG } from '$lib/config';
 	import { dragStore } from '$lib/stores/drag.svelte';
+	import { viewportStore } from '$lib/stores/viewport.svelte';
 	import type { PlacedPiece } from '$lib/types';
 	import { rotateVec2 } from '$lib/utils/geometry';
 	import TrackPiece from './TrackPiece.svelte';
 
 	const scale = PLARAIL_CONFIG.mmToPixels;
+	const baseWidth = VIEWPORT_CONFIG.baseWidth;
+	const baseHeight = VIEWPORT_CONFIG.baseHeight;
 
 	let canvasRect = $state<DOMRect | null>(null);
-	let canvasSize = $state<{ width: number; height: number } | null>(null);
 
 	function getDragPreviewPiece(): PlacedPiece | null {
 		if (!dragStore.isActive || !dragStore.activePieceDefinition) return null;
@@ -40,10 +42,12 @@
 		};
 	});
 
+	// Get current viewBox from viewport store
+	const viewBox = $derived(viewportStore.getViewBox(baseWidth, baseHeight));
+
 	$effect(() => {
 		if (!dragStore.isActive) {
 			canvasRect = null;
-			canvasSize = null;
 			return;
 		}
 
@@ -53,18 +57,14 @@
 		}
 
 		canvasRect = canvas.getBoundingClientRect();
-		canvasSize = {
-			width: canvas.viewBox.baseVal.width || canvas.width.baseVal.value,
-			height: canvas.viewBox.baseVal.height || canvas.height.baseVal.value
-		};
 	});
 </script>
 
-{#if previewPiece && canvasRect && canvasSize}
+{#if previewPiece && canvasRect}
 	<svg
 		class="pointer-events-none fixed z-50"
 		style={`left: ${canvasRect.left}px; top: ${canvasRect.top}px; width: ${canvasRect.width}px; height: ${canvasRect.height}px; overflow: visible;`}
-		viewBox={`0 0 ${canvasSize.width} ${canvasSize.height}`}
+		{viewBox}
 	>
 		<g opacity="0.6">
 			<TrackPiece piece={previewPiece} isSelected={false} onSelect={() => {}} />

@@ -26,4 +26,19 @@ export const PLARAIL_CONFIG = {
 	snapRadius: 10 // mm (distance threshold to snap)
 };
 
+export const VIEWPORT_CONFIG = {
+	// Canvas base dimensions (pixels)
+	baseWidth: 1200,
+	baseHeight: 800,
+
+	// Zoom constraints
+	minZoom: 0.25, // Quarter view
+	maxZoom: 4, // 4× magnification
+	zoomStep: 1.2, // Multiplier per scroll tick
+
+	// Pan threshold (pixels) before treating mousedown as pan vs click
+	panThreshold: 3
+};
+
 export type PlarailConfig = typeof PLARAIL_CONFIG;
+export type ViewportConfig = typeof VIEWPORT_CONFIG;

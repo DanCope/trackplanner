@@ -1,63 +1,75 @@
 <script lang="ts">
 	import PortIndicator from '$lib/components/PortIndicator.svelte';
 	import TrackPiece from '$lib/components/TrackPiece.svelte';
-	import { PLARAIL_CONFIG } from '$lib/config';
+	import { PLARAIL_CONFIG, VIEWPORT_CONFIG } from '$lib/config';
 	import { dragStore } from '$lib/stores/drag.svelte';
 	import { layoutStore } from '$lib/stores/layout.svelte';
 	import { selectionStore } from '$lib/stores/selection.svelte';
-	import type { PlacedPiece } from '$lib/types';
+	import { viewportStore } from '$lib/stores/viewport.svelte';
+	import type { PlacedPiece, Vec2 } from '$lib/types';
 	import { connectPorts, findCoincidentConnections } from '$lib/utils/connections';
 	import { rotateVec2 } from '$lib/utils/geometry';
 	import { computeSnapTransform } from '$lib/utils/snap';
 
-	const width = 1200;
-	const height = 800;
+	const width = VIEWPORT_CONFIG.baseWidth;
+	const height = VIEWPORT_CONFIG.baseHeight;
 	const scale = PLARAIL_CONFIG.mmToPixels;
 	const SNAP_DISTANCE = PLARAIL_CONFIG.snapRadius;
 
 	let nextPieceId = $state(1);
 	let availablePorts = $state<Set<string>>(new Set());
+	let panStartScreen: Vec2 | null = $state(null);
+	let didPan = $state(false);
+	let svgElement: SVGSVGElement | null = $state(null);
+	const PAN_THRESHOLD = VIEWPORT_CONFIG.panThreshold;
 
-	const handleCanvasClick = (event: MouseEvent): void => {
-		if (event.target === event.currentTarget) {
-			selectionStore.deselect();
+	const handleCanvasMouseDown = (event: MouseEvent): void => {
+		// Only handle empty canvas clicks (not pieces)
+		if (event.target === event.currentTarget && !dragStore.isActive) {
+			panStartScreen = { x: event.clientX, y: event.clientY };
+			didPan = false;
 		}
 	};
 
-	const handleCanvasKeydown = (event: KeyboardEvent): void => {
-		if (event.key === 'Delete' || event.key === 'Backspace') {
-			if (selectionStore.selectedPieceId) {
-				layoutStore.removePiece(selectionStore.selectedPieceId);
-				selectionStore.deselect();
+	const handleCanvasMouseMove = (event: MouseEvent): void => {
+		if (panStartScreen && svgElement) {
+			const dx = event.clientX - panStartScreen.x;
+			const dy = event.clientY - panStartScreen.y;
+
+			// Check if movement exceeds threshold
+			if (Math.abs(dx) > PAN_THRESHOLD || Math.abs(dy) > PAN_THRESHOLD) {
+				if (!didPan) {
+					// Start panning
+					viewportStore.startPan(panStartScreen);
+					didPan = true;
+				}
+
+				// Update pan with current position
+				viewportStore.updatePan({ x: event.clientX, y: event.clientY }, svgElement);
 			}
-		} else if (event.key === 'Escape') {
-			selectionStore.deselect();
 		}
-	};
-
-	const getWorldPositionFromEvent = (event: MouseEvent): { x: number; y: number } | null => {
-		const svg = event.currentTarget as SVGSVGElement | null;
-		if (!svg) {
-			return null;
-		}
-
-		const ctm = svg.getScreenCTM();
-		if (!ctm) {
-			return null;
-		}
-
-		const pt = svg.createSVGPoint();
-		pt.x = event.clientX;
-		pt.y = event.clientY;
-		const svgCoords = pt.matrixTransform(ctm.inverse());
-
-		return {
-			x: svgCoords.x / scale,
-			y: svgCoords.y / scale
-		};
 	};
 
 	const handleCanvasMouseUp = (event: MouseEvent): void => {
+		// Handle pan end
+		if (panStartScreen) {
+			if (didPan) {
+				viewportStore.endPan();
+			} else if (event.target === event.currentTarget) {
+				// Short click without dragging - deselect
+				selectionStore.deselect();
+			}
+
+			panStartScreen = null;
+			didPan = false;
+			return;
+		}
+
+		// Handle drag-and-drop from piece panel
+		handlePieceDrop(event);
+	};
+
+	const handlePieceDrop = (event: MouseEvent): void => {
 		if (!dragStore.isActive || !dragStore.activePieceDefinition) {
 			return;
 		}
@@ -117,6 +129,51 @@
 
 		// End drag
 		dragStore.endDrag();
+	};
+
+	const handleCanvasKeydown = (event: KeyboardEvent): void => {
+		if (event.key === 'Delete' || event.key === 'Backspace') {
+			if (selectionStore.selectedPieceId) {
+				layoutStore.removePiece(selectionStore.selectedPieceId);
+				selectionStore.deselect();
+			}
+		} else if (event.key === 'Escape') {
+			selectionStore.deselect();
+		}
+	};
+
+	const handleWheel = (event: WheelEvent): void => {
+		event.preventDefault();
+
+		const worldPos = getWorldPositionFromEvent(event as unknown as MouseEvent);
+		if (!worldPos) {
+			return;
+		}
+
+		const direction = event.deltaY < 0 ? 1 : -1; // Scroll up = zoom in
+		viewportStore.zoomAtPoint(direction, worldPos, width, height);
+	};
+
+	const getWorldPositionFromEvent = (event: MouseEvent): { x: number; y: number } | null => {
+		const svg = event.currentTarget as SVGSVGElement | null;
+		if (!svg) {
+			return null;
+		}
+
+		const ctm = svg.getScreenCTM();
+		if (!ctm) {
+			return null;
+		}
+
+		const pt = svg.createSVGPoint();
+		pt.x = event.clientX;
+		pt.y = event.clientY;
+		const svgCoords = pt.matrixTransform(ctm.inverse());
+
+		return {
+			x: svgCoords.x / scale,
+			y: svgCoords.y / scale
+		};
 	};
 
 	// Monitor drag state and compute snap targets
@@ -250,17 +307,18 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <svg
+	bind:this={svgElement}
 	id="track-canvas"
-	{width}
-	{height}
-	viewBox={`0 0 ${width} ${height}`}
-	class="rounded border border-gray-300 bg-white"
+	viewBox={viewportStore.getViewBox(width, height)}
+	class="h-full w-full rounded border border-gray-300 bg-white"
 	role="img"
 	aria-label="Track layout canvas"
 	tabindex="0"
-	onclick={handleCanvasClick}
-	onkeydown={handleCanvasKeydown}
+	onmousedown={handleCanvasMouseDown}
+	onmousemove={handleCanvasMouseMove}
 	onmouseup={handleCanvasMouseUp}
+	onkeydown={handleCanvasKeydown}
+	onwheel={handleWheel}
 >
 	{#each layoutStore.pieces as piece (piece.id)}
 		<TrackPiece

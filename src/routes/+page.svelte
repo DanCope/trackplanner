@@ -3,10 +3,16 @@
 	import DragPreview from '$lib/components/DragPreview.svelte';
 	import PiecePanel from '$lib/components/PiecePanel.svelte';
 	import Toolbar from '$lib/components/Toolbar.svelte';
+	import ZoomControls from '$lib/components/ZoomControls.svelte';
+	import { VIEWPORT_CONFIG } from '$lib/config';
 	import { dragStore } from '$lib/stores/drag.svelte';
 	import { layoutStore } from '$lib/stores/layout.svelte';
 	import { selectionStore } from '$lib/stores/selection.svelte';
+	import { viewportStore } from '$lib/stores/viewport.svelte';
 	import { onMount } from 'svelte';
+
+	const baseWidth = VIEWPORT_CONFIG.baseWidth;
+	const baseHeight = VIEWPORT_CONFIG.baseHeight;
 
 	function handleKeyDown(e: KeyboardEvent): void {
 		// Handle drag rotation/port cycling
@@ -25,6 +31,21 @@
 				dragStore.cyclePort(); // Cycle to next port
 				return;
 			}
+		}
+
+		// Handle zoom controls (when canvas or document is focused)
+		if (e.key === '+' || e.key === '=') {
+			e.preventDefault();
+			viewportStore.zoomIn(baseWidth, baseHeight);
+			return;
+		} else if (e.key === '-') {
+			e.preventDefault();
+			viewportStore.zoomOut(baseWidth, baseHeight);
+			return;
+		} else if (e.key === '0') {
+			e.preventDefault();
+			viewportStore.resetView();
+			return;
 		}
 
 		// Handle deletion of selected piece
@@ -56,6 +77,7 @@
 		<PiecePanel />
 		<div class="relative flex-grow">
 			<Canvas />
+			<ZoomControls />
 		</div>
 	</div>
 

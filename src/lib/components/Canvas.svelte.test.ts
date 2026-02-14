@@ -44,7 +44,10 @@ describe('Canvas', () => {
 
 		const { container } = render(Canvas);
 		const svg = container.querySelector('svg');
-		svg?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+		// Simulate a short click (mousedown then mouseup without moving)
+		svg?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 100, clientY: 100 }));
+		svg?.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 100, clientY: 100 }));
 
 		expect(selectionStore.selectedPieceId).toBeNull();
 	});
