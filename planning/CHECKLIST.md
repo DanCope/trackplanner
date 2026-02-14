@@ -159,6 +159,102 @@ Use this to track progress across all features.
 
 ---
 
+---
+
+---
+
+# V1.0 Implementation Checklist
+
+## Feature 8: Bridge Piece
+
+- [ ] 8.1: Update PieceDefinition Type
+- [ ] 8.2: Create Bridge Definition
+- [ ] 8.3: Export Bridge & Add to Panel
+- [ ] 8.4: Add Bridge Visual Styling
+- [ ] 8.5: Test & Verify
+
+**Status:** ⏳ Not Started
+
+---
+
+## Feature 9: Canvas Viewport (Zoom & Pan)
+
+- [ ] 9.1: Create ViewportStore
+- [ ] 9.2: Unit Test ViewportStore
+- [ ] 9.3: Integrate ViewportStore into Canvas
+- [ ] 9.4: Add Scroll Wheel Zoom
+- [ ] 9.5: Add Pan via Mouse Drag
+- [ ] 9.6: Create ZoomControls Component
+- [ ] 9.7: Update DragPreview for Dynamic ViewBox
+- [ ] 9.8: Add Keyboard Shortcuts & Final Verification
+
+**Status:** ⏳ Not Started
+
+---
+
+## Feature 10: Drag Placed Pieces
+
+- [ ] 10.1: Extend DragStore for Move Mode
+- [ ] 10.2: Unit Test Move-Drag Store
+- [ ] 10.3: Add Move Initiation to TrackPiece
+- [ ] 10.4: Wire Move-Drag in Canvas
+- [ ] 10.5: Handle Move-Drag Drop
+- [ ] 10.6: Handle Move-Drag Cancel
+- [ ] 10.7: Final Verification
+
+**Status:** ⏳ Not Started
+
+---
+
+## Feature 11: Save/Load Layouts
+
+- [ ] 11.1: Define Serialization Types
+- [ ] 11.2: Add IDs to Piece Definitions & Create Registry
+- [ ] 11.3: Implement Serialization Functions
+- [ ] 11.4: Unit Test Serialization
+- [ ] 11.5: Integrate Auto-Save and Load-on-Mount
+- [ ] 11.6: Add Save Indicator & Final Verification
+
+**Status:** ⏳ Not Started
+
+---
+
+## Feature 12: Undo/Redo
+
+- [ ] 12.1: Create UndoStore
+- [ ] 12.2: Create Action Classes
+- [ ] 12.3: Unit Test UndoStore
+- [ ] 12.4: Unit Test Action Classes
+- [ ] 12.5: Integrate into Canvas (Piece Placement)
+- [ ] 12.6: Integrate into Toolbar (Delete & Buttons)
+- [ ] 12.7: Keyboard Shortcuts & Final Verification
+
+**Status:** ⏳ Not Started
+
+---
+
+## Feature 13: UI Polish & Quick Wins
+
+- [ ] 13.1: Clear All Button
+- [ ] 13.2: Open Port Counter
+- [ ] 13.3: Piece Usage Summary
+- [ ] 13.4: Keyboard Shortcuts Help Panel
+- [ ] 13.5: Center on Layout (Fit to Content)
+
+**Status:** ⏳ Not Started
+
+---
+
+## V1.0 Overall Progress
+
+**Completed:** 0 / 6 features
+**In Progress:** 0 features
+**Total Tasks:** 38
+
+**Recommended Order:** F8 → F9 → F11 → F10 → F13 → F12
+
+---
+
 ## Feature Completion Notes
 
 After each feature completes, update this section:

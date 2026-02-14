@@ -31,9 +31,35 @@ planning/
 │   ├── context.md                         # Pre-placement rotation
 │   └── tasks.md                           # 5 tasks: keyboard, snap integration
 │
-└── 07-selection-delete/
-    ├── context.md                         # Selection, deletion, cleanup
-    └── tasks.md                           # 6 tasks: toolbar, keyboard, cleanup
+├── 07-selection-delete/
+│   ├── context.md                         # Selection, deletion, cleanup
+│   └── tasks.md                           # 6 tasks: toolbar, keyboard, cleanup
+│
+├── v1.0-README.md                         # V1.0 overview, dependency graph, strategy
+│
+├── 08-bridge-piece/
+│   ├── context.md                         # Bridge piece spec & design
+│   └── tasks.md                           # 5 tasks: definition, panel, styling
+│
+├── 09-canvas-viewport/
+│   ├── context.md                         # Zoom & pan design, viewBox approach
+│   └── tasks.md                           # 8 tasks: store, zoom, pan, controls
+│
+├── 10-drag-placed-pieces/
+│   ├── context.md                         # Move interaction flow, DragStore changes
+│   └── tasks.md                           # 7 tasks: store, initiation, drop, cancel
+│
+├── 11-save-load/
+│   ├── context.md                         # localStorage auto-save, serialization format
+│   └── tasks.md                           # 6 tasks: types, serialize, auto-save
+│
+├── 12-undo-redo/
+│   ├── context.md                         # Command pattern, action types
+│   └── tasks.md                           # 7 tasks: store, actions, integration
+│
+└── 13-ui-polish/
+    ├── context.md                         # Quick wins: clear, stats, help panel
+    └── tasks.md                           # 5 tasks: independent UI improvements
 ```
 
 ## How to Use This Structure
@@ -65,6 +91,17 @@ F2 (Data Model)  ←─ must complete before F3 and F4
     └───→ F5 (Drag & Snap) ←─ depends on both
         ↓ ↓
         F6 (Rotation) + F7 (Delete) ←─ can work in parallel
+```
+
+### V1.0 Dependencies
+
+```
+F8 (Bridge)  F9 (Viewport)  F11 (Save/Load)  ←─ all independent
+               ↓
+           F10 (Drag Placed)  ←─ after F9
+               ↓
+           F12 (Undo/Redo)  ←─ after F10
+F13 (UI Polish)  ←─ independent (13.5 needs F9)
 ```
 
 ## Content in Each Feature Folder
