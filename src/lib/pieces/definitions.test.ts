@@ -1,7 +1,7 @@
 import { PLARAIL_CONFIG } from '$lib/config';
 import { distanceVec2, oppositeDirection } from '$lib/utils/geometry';
 import { describe, expect, it } from 'vitest';
-import { curve45, longStraight, shortStraight, turnout } from './definitions';
+import { bridge, curve45, longStraight, shortStraight, turnout } from './definitions';
 
 describe('Piece Definitions', () => {
 	describe('Short Straight', () => {
@@ -172,6 +172,55 @@ describe('Piece Definitions', () => {
 			expect(straightDist).toBeCloseTo(PLARAIL_CONFIG.straightLength * 2, 1);
 			// Branch should be similar length (within 10mm)
 			expect(Math.abs(branchDist - straightDist)).toBeLessThan(10);
+		});
+	});
+
+	describe('Bridge', () => {
+		it('has exactly two ports', () => {
+			expect(bridge.ports).toHaveLength(2);
+		});
+
+		it('has type bridge', () => {
+			expect(bridge.type).toBe('bridge');
+		});
+
+		it('port A is at correct position with direction S', () => {
+			const portA = bridge.ports.find((p) => p.id === 'A');
+			expect(portA).toBeDefined();
+			if (portA) {
+				expect(portA.position.x).toBeCloseTo(0);
+				expect(portA.position.y).toBeCloseTo(-135, 1);
+				expect(portA.direction).toBe('S');
+			}
+		});
+
+		it('port B is at correct position with direction N', () => {
+			const portB = bridge.ports.find((p) => p.id === 'B');
+			expect(portB).toBeDefined();
+			if (portB) {
+				expect(portB.position.x).toBeCloseTo(0);
+				expect(portB.position.y).toBeCloseTo(135, 1);
+				expect(portB.direction).toBe('N');
+			}
+		});
+
+		it('ports are 270mm apart (5x short straight)', () => {
+			const [portA, portB] = bridge.ports;
+			const distance = distanceVec2(portA.position, portB.position);
+			const expectedLength = PLARAIL_CONFIG.straightLength * 5; // 270mm
+			expect(distance).toBeCloseTo(expectedLength, 1);
+		});
+
+		it('port directions are opposite', () => {
+			const [portA, portB] = bridge.ports;
+			expect(portB.direction).toBe(oppositeDirection(portA.direction));
+		});
+
+		it('has valid SVG path', () => {
+			expect(bridge.svgPath).toMatch(/^M/);
+			expect(bridge.svgPath).toContain('L');
+			expect(bridge.svgPath).toContain('Z');
+			expect(bridge.svgPath.length).toBeGreaterThan(0);
 		});
 	});
 });

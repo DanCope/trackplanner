@@ -7,7 +7,7 @@ export interface Port {
 }
 
 export interface PieceDefinition {
-	type: 'straight' | 'curve' | 'turnout'; // Piece type
+	type: 'straight' | 'curve' | 'turnout' | 'bridge'; // Piece type
 	ports: Port[]; // All available ports
 	svgPath: string; // SVG path data (relative to origin)
 }

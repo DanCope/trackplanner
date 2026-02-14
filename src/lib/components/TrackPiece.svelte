@@ -21,12 +21,17 @@
 		switch (piece.definition.type) {
 			case 'straight':
 				return '#bfdbfe'; // blue-200
+			case 'bridge':
+				return '#fde68a'; // amber-200
 			case 'turnout':
 				return '#bbf7d0'; // green-200
 			default:
 				return '#fecdd3'; // rose-200
 		}
 	});
+
+	// Bridge pieces have dashed stroke to visually indicate elevation
+	const strokeDashArray = $derived(piece.definition.type === 'bridge' ? '4,2' : undefined);
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -37,6 +42,7 @@
 		d={piece.definition.svgPath}
 		stroke="#374151"
 		stroke-width="2"
+		stroke-dasharray={strokeDashArray}
 		transform={`scale(${scale})`}
 		vector-effect="non-scaling-stroke"
 		fill={fillColor}

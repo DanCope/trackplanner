@@ -136,6 +136,30 @@ export const turnout: PieceDefinition = {
 			A ${innerRadius} ${innerRadius} 0 0 0 ${outerEndX} ${outerEndY}
 			L ${innerEndX} ${innerEndY}  
 			A ${outerRadius} ${outerRadius} 0 0 1 ${width / 2} ${outerStartY}
-			Z`;
+			Z`.trim();
 	})()
+};
+
+const bridgeLength = straightLength * 5; // 270 mm
+const bridgeHalfLength = bridgeLength / 2; // 135 mm
+
+export const bridge: PieceDefinition = {
+	type: 'bridge',
+	ports: [
+		{
+			id: 'A',
+			position: { x: 0, y: -bridgeHalfLength },
+			direction: 'S'
+		},
+		{
+			id: 'B',
+			position: { x: 0, y: bridgeHalfLength },
+			direction: 'N'
+		}
+	],
+	// SVG path: rectangle centered at origin
+	// Width = 10 mm, Height = bridgeLength mm (5x short straight)
+	svgPath: `M ${-width / 2} ${-bridgeHalfLength} L ${width / 2} ${-bridgeHalfLength} L ${
+		width / 2
+	} ${bridgeHalfLength} L ${-width / 2} ${bridgeHalfLength} Z`
 };

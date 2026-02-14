@@ -165,15 +165,15 @@ Use this to track progress across all features.
 
 # V1.0 Implementation Checklist
 
-## Feature 8: Bridge Piece
+## Feature 8: Bridge Piece ✅
 
-- [ ] 8.1: Update PieceDefinition Type
-- [ ] 8.2: Create Bridge Definition
-- [ ] 8.3: Export Bridge & Add to Panel
-- [ ] 8.4: Add Bridge Visual Styling
-- [ ] 8.5: Test & Verify
+- [x] 8.1: Update PieceDefinition Type
+- [x] 8.2: Create Bridge Definition
+- [x] 8.3: Export Bridge & Add to Panel
+- [x] 8.4: Add Bridge Visual Styling
+- [x] 8.5: Test & Verify
 
-**Status:** ⏳ Not Started
+**Status:** ✅ Complete
 
 ---
 
@@ -247,7 +247,7 @@ Use this to track progress across all features.
 
 ## V1.0 Overall Progress
 
-**Completed:** 0 / 6 features
+**Completed:** 1 / 6 features
 **In Progress:** 0 features
 **Total Tasks:** 38
 
@@ -283,3 +283,8 @@ After each feature completes, update this section:
 
 - Completed: February 9, 2026
 - Notes: Selection and deletion fully implemented. Created Toolbar component with delete button and piece count display. Keyboard shortcuts (Delete/Backspace) work alongside button deletion. Enhanced TrackPiece visual feedback with dashed border, circle outline, hover effects, and blue glow for selection. LayoutStore.removePiece() automatically cleans up all connections. All tests pass (42 tests), type check passes with 2 non-blocking a11y warnings, build succeeds. MVP complete and ready for deployment.
+
+### Feature 8: ✅
+
+- Completed: February 14, 2026
+- Notes: Bridge piece (270mm, 5x short straight) fully implemented. Added 'bridge' type to PieceDefinition union. Bridge has amber fill color (#fde68a) and dashed stroke (4,2) to visually indicate elevation. Positioned in piece panel between long straight and curve. All 7 bridge tests pass (port positions, distance, directions, type, SVG path). Fixed pre-existing turnout SVG path whitespace issue. Type check passes (0 errors, 0 warnings), all 29 piece definition tests pass, build succeeds. Bridge can be dragged, snapped, rotated, and deleted like other pieces.
