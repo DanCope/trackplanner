@@ -37,7 +37,12 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<g {transform} onclick={onSelect} class:selected={isSelected} pointer-events={interactive ? 'bounding-box' : 'none'}>
+<g
+	{transform}
+	onclick={onSelect}
+	class:selected={isSelected}
+	pointer-events={interactive ? 'bounding-box' : 'none'}
+>
 	<!-- Piece SVG path (thicker stroke for visibility) -->
 	<path
 		d={piece.definition.svgPath}

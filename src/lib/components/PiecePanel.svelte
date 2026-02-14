@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { PLARAIL_CONFIG } from '$lib/config';
-	import { bridge, curve45, longStraight, shortStraight, turnoutLeft, turnoutRight } from '$lib/pieces';
+	import {
+		bridge,
+		curve45,
+		longStraight,
+		shortStraight,
+		turnoutLeft,
+		turnoutRight
+	} from '$lib/pieces';
 	import { dragStore } from '$lib/stores/drag.svelte';
 	import type { PieceDefinition } from '$lib/types';
 
