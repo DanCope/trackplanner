@@ -7,10 +7,11 @@
 		piece: PlacedPiece;
 		isSelected?: boolean;
 		onSelect?: () => void;
+		onStartMove?: () => void;
 		interactive?: boolean;
 	}
 
-	let { piece, isSelected = false, onSelect, interactive = true }: Props = $props();
+	let { piece, isSelected = false, onSelect, onStartMove, interactive = true }: Props = $props();
 
 	const scale = PLARAIL_CONFIG.mmToPixels;
 	const transform = $derived(
@@ -33,6 +34,15 @@
 
 	// Bridge pieces have dashed stroke to visually indicate elevation
 	const strokeDashArray = $derived(piece.definition.type === 'bridge' ? '4,2' : undefined);
+
+	const handleMouseDown = (event: MouseEvent): void => {
+		if (isSelected && onStartMove) {
+			event.preventDefault();
+			event.stopPropagation();
+			onStartMove();
+		}
+	};
+
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -40,6 +50,7 @@
 <g
 	{transform}
 	onclick={onSelect}
+	onmousedown={handleMouseDown}
 	class:selected={isSelected}
 	pointer-events={interactive ? 'bounding-box' : 'none'}
 >

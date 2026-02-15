@@ -9,6 +9,7 @@
 	import { layoutStore } from '$lib/stores/layout.svelte';
 	import { selectionStore } from '$lib/stores/selection.svelte';
 	import { viewportStore } from '$lib/stores/viewport.svelte';
+	import type { PlacedPiece } from '$lib/types';
 	import { onMount } from 'svelte';
 
 	const baseWidth = VIEWPORT_CONFIG.baseWidth;
@@ -29,6 +30,40 @@
 				e.preventDefault();
 				e.stopPropagation();
 				dragStore.cyclePort(); // Cycle to next port
+				return;
+			} else if (e.key === 'Escape') {
+				e.preventDefault();
+				e.stopPropagation();
+
+				// If this is a move-drag, restore the piece to its original position
+				if (dragStore.isMoveDrag) {
+					// Save definition before cancelDrag clears it
+					const definition = dragStore.activePieceDefinition!;
+					const original = dragStore.cancelDrag();
+					if (original) {
+						// Re-add piece with original state
+						const restoredPiece: PlacedPiece = {
+							id: original.id,
+							definition,
+							position: original.position,
+							rotation: original.rotation,
+							connections: original.connections
+						};
+						layoutStore.addPiece(restoredPiece);
+
+						// Restore bidirectional connections on neighbor pieces
+						for (const [portId, connectionString] of original.connections.entries()) {
+							const [neighborId, neighborPortId] = connectionString.split(':');
+							const neighborPiece = layoutStore.pieces.find((p) => p.id === neighborId);
+							if (neighborPiece) {
+								neighborPiece.connections.set(neighborPortId, `${original.id}:${portId}`);
+							}
+						}
+					}
+				} else {
+					// Just end the drag for new piece placement
+					dragStore.endDrag();
+				}
 				return;
 			}
 		}

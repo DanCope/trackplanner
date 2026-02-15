@@ -194,15 +194,15 @@ Use this to track progress across all features.
 
 ## Feature 10: Drag Placed Pieces
 
-- [ ] 10.1: Extend DragStore for Move Mode
-- [ ] 10.2: Unit Test Move-Drag Store
-- [ ] 10.3: Add Move Initiation to TrackPiece
-- [ ] 10.4: Wire Move-Drag in Canvas
-- [ ] 10.5: Handle Move-Drag Drop
-- [ ] 10.6: Handle Move-Drag Cancel
-- [ ] 10.7: Final Verification
+- [x] 10.1: Extend DragStore for Move Mode
+- [x] 10.2: Unit Test Move-Drag Store
+- [x] 10.3: Add Move Initiation to TrackPiece
+- [x] 10.4: Wire Move-Drag in Canvas
+- [x] 10.5: Handle Move-Drag Drop
+- [x] 10.6: Handle Move-Drag Cancel
+- [x] 10.7: Final Verification
 
-**Status:** ⏳ Not Started
+**Status:** ✅ Complete
 
 ---
 
@@ -247,7 +247,7 @@ Use this to track progress across all features.
 
 ## V1.0 Overall Progress
 
-**Completed:** 1 / 6 features
+**Completed:** 3 / 6 features
 **In Progress:** 0 features
 **Total Tasks:** 38
 
@@ -288,3 +288,13 @@ After each feature completes, update this section:
 
 - Completed: February 14, 2026
 - Notes: Bridge piece (270mm, 5x short straight) fully implemented. Added 'bridge' type to PieceDefinition union. Bridge has amber fill color (#fde68a) and dashed stroke (4,2) to visually indicate elevation. Positioned in piece panel between long straight and curve. All 7 bridge tests pass (port positions, distance, directions, type, SVG path). Fixed pre-existing turnout SVG path whitespace issue. Type check passes (0 errors, 0 warnings), all 29 piece definition tests pass, build succeeds. Bridge can be dragged, snapped, rotated, and deleted like other pieces.
+
+### Feature 9: ✅
+
+- Completed: February 14, 2026
+- Notes: Canvas viewport with zoom and pan fully implemented. ViewportStore manages zoom level (0.25x - 4x, 0.25 steps) and pan offset using viewBox transformation. Scroll wheel zooms at cursor position (world coordinates preserved). Click-and-drag pans canvas (3px threshold to distinguish from clicks). ZoomControls component provides +/- buttons and reset. Keyboard shortcuts: +/- for zoom, 0 for reset. All coordinate transforms account for viewport. 24 viewport tests pass, all 138 tests pass, type check clean, build succeeds.
+
+### Feature 10: ✅
+
+- Completed: February 14, 2026
+- Notes: Drag-to-move placed pieces fully implemented. Extended DragStore with move-drag mode (sourcePieceId, originalPosition, originalRotation, originalConnections). TrackPiece mousedown initiates move only when already selected. Canvas handleStartMove disconnects piece, removes from layout, tracks drag. Move-drag preserves piece ID on drop (critical for future undo/redo). Escape cancels move and restores piece with all bidirectional connections. 11 new move-drag tests added (27 total drag tests). All 138 tests pass, type check clean (0 errors, 0 warnings), build succeeds.

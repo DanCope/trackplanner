@@ -1,4 +1,5 @@
 import { curve45, shortStraight } from '$lib/pieces';
+import type { PlacedPiece } from '$lib/types';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { DragStore } from './drag.svelte';
 
@@ -149,5 +150,129 @@ describe('DragStore port cycling', () => {
 		expect(store.selectedPortIndex).toBe(1);
 		store.endDrag();
 		expect(store.selectedPortIndex).toBe(null);
+	});
+});
+
+describe('DragStore move-drag', () => {
+	let store: DragStore;
+	let piece1: PlacedPiece;
+	let piece2: PlacedPiece;
+	let allPieces: PlacedPiece[];
+
+	beforeEach(() => {
+		store = new DragStore();
+
+		// Create two connected pieces
+		piece1 = {
+			id: 'piece-1',
+			definition: shortStraight,
+			position: { x: 0, y: 0 },
+			rotation: 0,
+			connections: new Map([['port-B', 'piece-2:port-A']])
+		};
+
+		piece2 = {
+			id: 'piece-2',
+			definition: shortStraight,
+			position: { x: 135, y: 0 },
+			rotation: 180,
+			connections: new Map([['port-A', 'piece-1:port-B']])
+		};
+
+		allPieces = [piece1, piece2];
+	});
+
+	test('startMoveDrag sets sourcePieceId and isMoveDrag', () => {
+		store.startMoveDrag(piece1, allPieces);
+		expect(store.sourcePieceId).toBe('piece-1');
+		expect(store.isMoveDrag).toBe(true);
+		expect(store.isActive).toBe(true);
+	});
+
+	test('startMoveDrag preserves original position and rotation', () => {
+		store.startMoveDrag(piece1, allPieces);
+		expect(store.originalPosition).toEqual({ x: 0, y: 0 });
+		expect(store.originalRotation).toBe(0);
+	});
+
+	test('startMoveDrag deep-copies connections', () => {
+		store.startMoveDrag(piece1, allPieces);
+		expect(store.originalConnections).toEqual(new Map([['port-B', 'piece-2:port-A']]));
+
+		// Mutate the original - should not affect the copy
+		piece1.connections.set('port-A', 'fake-connection');
+		expect(store.originalConnections?.has('port-A')).toBe(false);
+		expect(store.originalConnections?.get('port-B')).toBe('piece-2:port-A');
+	});
+
+	test('startMoveDrag disconnects piece from neighbors', () => {
+		store.startMoveDrag(piece1, allPieces);
+
+		// piece1 should have no connections
+		expect(piece1.connections.size).toBe(0);
+
+		// piece2 should also have no connections (bidirectional disconnect)
+		expect(piece2.connections.size).toBe(0);
+	});
+
+	test('startMoveDrag sets activePieceDefinition and preRotation', () => {
+		piece1.rotation = 90;
+		store.startMoveDrag(piece1, allPieces);
+
+		expect(store.activePieceDefinition).toBe(shortStraight);
+		expect(store.preRotation).toBe(90);
+	});
+
+	test('cancelDrag returns original state for move drag', () => {
+		store.startMoveDrag(piece1, allPieces);
+
+		const original = store.cancelDrag();
+
+		expect(original).not.toBe(null);
+		expect(original?.id).toBe('piece-1');
+		expect(original?.position).toEqual({ x: 0, y: 0 });
+		expect(original?.rotation).toBe(0);
+		expect(original?.connections).toEqual(new Map([['port-B', 'piece-2:port-A']]));
+	});
+
+	test('cancelDrag returns null for new-piece drag', () => {
+		store.startDrag(shortStraight);
+
+		const original = store.cancelDrag();
+
+		expect(original).toBe(null);
+	});
+
+	test('cancelDrag calls endDrag and clears state', () => {
+		store.startMoveDrag(piece1, allPieces);
+		store.cancelDrag();
+
+		expect(store.isActive).toBe(false);
+		expect(store.sourcePieceId).toBe(null);
+		expect(store.originalPosition).toBe(null);
+		expect(store.originalConnections).toBe(null);
+	});
+
+	test('endDrag clears all move-specific state', () => {
+		store.startMoveDrag(piece1, allPieces);
+
+		expect(store.sourcePieceId).toBe('piece-1');
+		expect(store.originalPosition).not.toBe(null);
+
+		store.endDrag();
+
+		expect(store.sourcePieceId).toBe(null);
+		expect(store.originalPosition).toBe(null);
+		expect(store.originalRotation).toBe(0);
+		expect(store.originalConnections).toBe(null);
+	});
+
+	test('isMoveDrag is false for new-piece drags', () => {
+		store.startDrag(shortStraight);
+		expect(store.isMoveDrag).toBe(false);
+	});
+
+	test('isMoveDrag is false when not active', () => {
+		expect(store.isMoveDrag).toBe(false);
 	});
 });

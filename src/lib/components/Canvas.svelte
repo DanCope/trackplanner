@@ -83,6 +83,9 @@
 		let rotation = dragStore.preRotation;
 		const connections = new Map<string, string>();
 
+		// Determine piece ID: reuse for move-drag, generate new for placement
+		const pieceId = dragStore.isMoveDrag ? dragStore.sourcePieceId! : `piece-${nextPieceId}`;
+
 		// If snapped to a target, use snap position and create connection
 		if (dragStore.snapTarget && dragStore.snappedPosition) {
 			position = dragStore.snappedPosition;
@@ -93,7 +96,6 @@
 			if (targetPiece) {
 				const draggedPortId =
 					dragStore.snappedPortId ?? dragStore.activePieceDefinition.ports[0].id;
-				const newPieceId = `piece-${nextPieceId}`;
 
 				// Add connection on dragged piece
 				connections.set(
@@ -102,13 +104,13 @@
 				);
 
 				// Add connection on target piece
-				targetPiece.connections.set(dragStore.snapTarget.portId, `${newPieceId}:${draggedPortId}`);
+				targetPiece.connections.set(dragStore.snapTarget.portId, `${pieceId}:${draggedPortId}`);
 			}
 		}
 
-		// Create and add the new piece
+		// Create and add the piece
 		const newPiece: PlacedPiece = {
-			id: `piece-${nextPieceId}`,
+			id: pieceId,
 			definition: dragStore.activePieceDefinition,
 			position,
 			rotation,
@@ -116,7 +118,11 @@
 		};
 
 		layoutStore.addPiece(newPiece);
-		nextPieceId++;
+
+		// Only increment ID if this was a new piece (not a move)
+		if (!dragStore.isMoveDrag) {
+			nextPieceId++;
+		}
 
 		// Find and connect any coincident ports (loop closure)
 		const coincidentMatches = findCoincidentConnections(newPiece, layoutStore.pieces, 0.5);
@@ -140,6 +146,31 @@
 		} else if (event.key === 'Escape') {
 			selectionStore.deselect();
 		}
+	};
+
+	const handleStartMove = (piece: PlacedPiece): void => {
+		// Start move-drag in drag store (disconnects and saves state)
+		dragStore.startMoveDrag(piece, layoutStore.pieces);
+
+		// Temporarily remove piece from layout
+		layoutStore.removePiece(piece.id);
+
+		// Set up mousemove/mouseup listeners for drag tracking
+		const handleMouseMove = (event: MouseEvent): void => {
+			const worldPos = getWorldPositionFromEvent(event);
+			if (worldPos) {
+				dragStore.updateCursorPosition(worldPos);
+			}
+		};
+
+		const handleMouseUp = (): void => {
+			document.removeEventListener('mousemove', handleMouseMove);
+			document.removeEventListener('mouseup', handleMouseUp);
+			// Drop is handled by existing handleCanvasMouseUp
+		};
+
+		document.addEventListener('mousemove', handleMouseMove);
+		document.addEventListener('mouseup', handleMouseUp);
 	};
 
 	const handleWheel = (event: WheelEvent): void => {
@@ -325,6 +356,7 @@
 			{piece}
 			isSelected={selectionStore.isSelected(piece.id)}
 			onSelect={() => selectionStore.select(piece.id)}
+			onStartMove={() => handleStartMove(piece)}
 		/>
 	{/each}
 
